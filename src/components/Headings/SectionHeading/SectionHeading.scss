@@ -1,0 +1,12 @@
+.section-heading {
+  margin-top: 13px;
+  font-weight: 600;
+  text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
+  line-height: 1.2;
+  color: #2b2e35;
+  font-size: 2rem;
+
+  &--center {
+    text-align: center;
+  }
+}

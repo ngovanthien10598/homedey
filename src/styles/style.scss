@@ -1,0 +1,14 @@
+// Settings
+@import 'variable';
+@import 'color';
+@import 'global';
+@import 'utils';
+
+// Components
+
+// Containers
+@import 'containers/AuthForm/AuthForm.scss';
+
+// Layouts
+@import './layouts/home';
+@import './layouts/auth';

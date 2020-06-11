@@ -1,0 +1,31 @@
+$swiperHeight: 550px;
+:root {
+  --swiper-theme-color: #fff;
+}
+
+.swiper {
+  &-container {
+    height: $swiperHeight;
+    min-height: $swiperHeight;
+    max-height: $swiperHeight;
+  }
+
+  &-button-next::after,
+  &-button-prev::after {
+    font-family: swiper-icons;
+    font-size: var(--swiper-navigation-size);
+    text-transform: none !important;
+    letter-spacing: 0;
+    text-transform: none;
+    font-variant: initial;
+    line-height: 1;
+  }
+
+  &-button-next::after {
+    content: "next";
+  }
+
+  &-button-prev::after {
+    content: "prev";
+  }
+}

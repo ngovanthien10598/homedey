@@ -1,0 +1,28 @@
+.page-home {
+  min-height: calc(100vh - 64px);
+  .header {
+    position: relative;
+    padding: 0;
+    min-height: 270px;
+    background: url($imagePrefix + "/header-background.jpg") no-repeat center;
+    background-size: cover;
+    z-index: 0;
+
+    &_wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+
+    &_heading {
+      font-size: 4rem;
+      color: $white;
+      font-weight: 900;
+    }
+  }
+
+  .search-form {
+    padding: 60px 30px 0;
+  }
+}
