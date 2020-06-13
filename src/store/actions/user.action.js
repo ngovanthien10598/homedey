@@ -25,7 +25,7 @@ export function loginAction(body) {
       dispatch(loginSuccess(token));
       dispatch(getProfileAction(token));
     } catch (error) {
-      console.log(error);
+      
     }
   }
 }
@@ -36,12 +36,13 @@ export function getProfileAction(token) {
       const getProfileRes = await getProfileAPI(token);
       dispatch(getProfileSuccess(getProfileRes.data.data));
     } catch (error) {
-      console.log(error);
+      console.log({ error: error });
     }
   }
 }
 
 export function logoutAction() {
+  localStorage.removeItem('user');
   return {
     type: actionTypes.LOGOUT
   }

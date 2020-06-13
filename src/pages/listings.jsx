@@ -1,8 +1,11 @@
 import React from 'react';
+import MainLayout from 'layouts/MainLayout/MainLayout';
 
 const ListingsPage = props => {
   return (
-    <div>Listings page</div>
+    <MainLayout>
+      <div>Listings page</div>
+    </MainLayout>
   )
 }
 

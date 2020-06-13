@@ -1,11 +1,14 @@
 import React from 'react';
 import LoginForm from 'forms/LoginForm/LoginForm';
+import MainLayout from 'layouts/MainLayout/MainLayout';
 
 const LoginPage = props => {
   return (
-    <div className="page-auth">
-      <LoginForm />
-    </div>
+    <MainLayout>
+      <div className="page-auth">
+        <LoginForm />
+      </div>
+    </MainLayout>
   )
 }
 

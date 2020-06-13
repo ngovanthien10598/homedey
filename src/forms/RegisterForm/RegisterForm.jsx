@@ -1,19 +1,31 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Form, Input, Divider, Button, Row, Col } from 'antd';
+import { Link, useHistory } from 'react-router-dom';
+import { Form, Input, Divider, Button, Row, Col, notification } from 'antd';
 import AuthForm from 'containers/AuthForm/AuthForm';
 
 import { registerAPI } from 'services/auth/register';
-import { phoneValidationString } from 'constants/validationString';
+import { useState } from 'react';
 
 const RegisterForm = props => {
+  const history = useHistory();
+  const [isLoading, setLoading] = useState(false);
 
   const handleRegister = async values => {
+    setLoading(true);
     try {
       const registerRes = await registerAPI(values);
+      notification.success({
+        message: 'Đăng ký thành công',
+        description: 'Vui lòng xác nhận tài khoản của bạn bằng email được gửi để đăng nhập.',
+        duration: 2000,
+        onClose: () => {
+          history.replace('/dang-nhap');
+        }
+      })
       console.log(registerRes);
     } catch (error) {
     }
+    setLoading(false);
   }
 
   return (
@@ -61,14 +73,16 @@ const RegisterForm = props => {
         ]} hasFeedback>
           <Input.Password id="confirm-password" />
         </Form.Item>
+        {/*
         <Form.Item label="Điện thoại" htmlFor="phone" name="phone" rules={[
           { required: true, message: 'Vui lòng nhập số điện thoại' },
           { pattern: phoneValidationString, message: 'Số điện thoại không hợp lệ' }
         ]}>
           <Input id="phone" />
         </Form.Item>
+        */}
         <Form.Item >
-          <Button type="primary" htmlType="submit" block>Đăng ký</Button>
+          <Button type="primary" loading={isLoading} htmlType="submit" block>Đăng ký</Button>
         </Form.Item>
         <p className="text-center">Đã có tài khoản? <Link to="/dang-nhap">Đăng nhập</Link></p>
       </Form>

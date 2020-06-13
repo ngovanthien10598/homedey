@@ -1,8 +1,11 @@
 import React from 'react';
+import MainLayout from 'layouts/MainLayout/MainLayout';
 
 const AboutPage = props => {
   return (
-    <div>About page</div>
+    <MainLayout>
+      <div>About page</div>
+    </MainLayout>
   )
 }
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { Layout } from 'antd';
 import PageHeader from 'components/Header/Header';
 // import PageFooter from 'components/Footer/Footer';
@@ -9,20 +8,18 @@ const { Content } = Layout;
 const MainLayout = props => {
   return (
     <Layout className="layout">
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
-        <PageHeader />
-        <Content className="layout_content">
+      <PageHeader />
+      <Content className="layout_content">
 
-          {
-            props.children
-          }
+        {
+          props.children
+        }
 
-        </Content>
+      </Content>
 
-        {/* <Footer>
+      {/* <Footer>
           <PageFooter />
         </Footer> */}
-      </BrowserRouter>
     </Layout >
   )
 }

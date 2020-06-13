@@ -1,0 +1,12 @@
+.admin-layout {
+  &_header {
+    z-index: 1;
+    position: fixed;
+    width: 100%;
+  }
+
+  &_sider {
+    min-height: 100vh;
+    padding-top: 64px;
+  }
+}

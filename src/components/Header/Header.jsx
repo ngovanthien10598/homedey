@@ -15,7 +15,7 @@ const PageHeader = (props) => {
     { name: 'Bất động sản', path: '/bat-dong-san' },
     { name: 'Dự án', path: '/du-an' },
     { name: 'Tin tức', path: '/tin-tuc' },
-    { name: 'Liên hệ', path: '/lien-he' },
+    // { name: 'Liên hệ', path: '/lien-he' },
   ]
   const location = useLocation();
   const dispatch = useDispatch();

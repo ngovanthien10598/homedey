@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Form, Input, Divider, Button } from 'antd';
 import { MailOutlined, KeyOutlined } from '@ant-design/icons';
 import AuthForm from 'containers/AuthForm/AuthForm';
@@ -12,6 +12,7 @@ const LoginForm = props => {
   const dispatch = useDispatch();
   const history = useHistory();
   const [isLoading, setLoading] = useState(false);
+  const location = useLocation();
   const [, setCookie] = useCookies(['token']);
   const userState = useSelector(state => state.userState);
 
@@ -31,9 +32,18 @@ const LoginForm = props => {
     if (user && token) {
       setCookie('token', token, { maxAge: 7 * 24 * 3600 });
       localStorage.setItem('user', user.first_name + ' ' + user.last_name);
-      history.replace('/');
+      const search = location.search;
+      if (search.length > 0) {
+        const searchParams = new URLSearchParams(search);
+        const next = searchParams.get('next');
+        if (next.length > 0) {
+          history.replace(next);
+        }
+      } else {
+        history.replace('/');
+      }
     }
-  }, [userState, setCookie, history]);
+  });
 
   return (
     <AuthForm>
