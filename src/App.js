@@ -12,24 +12,23 @@ import LoginPage from 'pages/login';
 import RegisterPage from 'pages/register';
 import ProjectsPage from 'pages/projects';
 import VerifyPage from 'pages/verify-email';
+import UserLayout from 'layouts/UserLayout/UserLayout';
 import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 
-import { useCookies } from 'react-cookie';
-import { setToken, getProfileAction } from 'store/actions/user.action';
+import Cookies from 'js-cookie';
+import { setAccessToken, getProfileAction } from 'store/actions/user.action';
 import { useDispatch, useSelector } from 'react-redux';
 
 
-
 const App = props => {
-
-  const [cookies] = useCookies(['token']);
   const dispatch = useDispatch();
   const userState = useSelector(state => state.userState);
 
   useEffect(() => {
-    if (cookies['token'] && !userState.token && localStorage.user) {
-      dispatch(setToken(cookies['token']));
-      dispatch(getProfileAction(cookies['token']));
+    const accessToken = Cookies.get('access');
+    if (accessToken && !userState.accessToken && localStorage.user) {
+      dispatch(setAccessToken(accessToken));
+      dispatch(getProfileAction(accessToken));
     }
   });
 
@@ -44,6 +43,7 @@ const App = props => {
         <Route path="/dang-nhap" component={LoginPage} />
         <Route path="/dang-ky" component={RegisterPage} />
         <Route path="/verify-email" component={VerifyPage} />
+        <Route path="/me" component={UserLayout} />
         <Route path="/admin" component={AdminLayout} />
       </Switch>
     </Router>

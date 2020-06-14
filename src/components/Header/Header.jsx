@@ -4,7 +4,7 @@ import { Layout, Menu } from 'antd';
 import './Header.scss';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutAction } from 'store/actions/user.action';
-import { useCookies } from 'react-cookie';
+import Cookies from 'js-cookie';
 
 const { Header } = Layout;
 
@@ -22,11 +22,10 @@ const PageHeader = (props) => {
   const userState = useSelector(state => state.userState);
   const { user } = userState;
   const userLocal = localStorage.getItem('user');
-  const [,,removeCookies] = useCookies(['token']);
 
   const handleLogout = () => {
     dispatch(logoutAction());
-    removeCookies('token');
+    Cookies.remove('access');
     localStorage.removeItem('user');
   }
 
@@ -50,8 +49,8 @@ const PageHeader = (props) => {
       {
         user || userLocal ?
           <Menu className="header_menu header_menu--auth" theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-            <Menu.Item key="/me">
-              <Link to="/me">{user ? user.first_name + ' ' + user.last_name : userLocal}</Link>
+            <Menu.Item key="/me/">
+              <Link to={`${user ? (user.is_staff ? '/admin/' : '/me/') : ''}`}>{user ? user.first_name + ' ' + user.last_name : userLocal}</Link>
             </Menu.Item>
             <Menu.Item key="/dang-xuat">
               <Link to="/" onClick={handleLogout}>Đăng xuất</Link>

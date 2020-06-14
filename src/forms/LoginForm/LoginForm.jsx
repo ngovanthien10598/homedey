@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { Form, Input, Divider, Button } from 'antd';
+import { Form, Input, Divider, Button, Alert } from 'antd';
 import { MailOutlined, KeyOutlined } from '@ant-design/icons';
 import AuthForm from 'containers/AuthForm/AuthForm';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from 'store/actions/user.action';
-import { useCookies } from 'react-cookie';
+import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 
 const LoginForm = props => {
@@ -13,8 +13,11 @@ const LoginForm = props => {
   const history = useHistory();
   const [isLoading, setLoading] = useState(false);
   const location = useLocation();
-  const [, setCookie] = useCookies(['token']);
   const userState = useSelector(state => state.userState);
+
+  const search = location.search;
+  const searchParams = new URLSearchParams(search);
+  const next = searchParams.get('next');
 
   const handleLogin = async values => {
     setLoading(true);
@@ -28,14 +31,11 @@ const LoginForm = props => {
   }
 
   useEffect(() => {
-    const { user, token } = userState;
-    if (user && token) {
-      setCookie('token', token, { maxAge: 7 * 24 * 3600 });
+    const { user, accessToken } = userState;
+    if (user && accessToken) {
+      Cookies.set('access', accessToken, { expires: 10 * 60 });
       localStorage.setItem('user', user.first_name + ' ' + user.last_name);
-      const search = location.search;
       if (search.length > 0) {
-        const searchParams = new URLSearchParams(search);
-        const next = searchParams.get('next');
         if (next.length > 0) {
           history.replace(next);
         }
@@ -47,6 +47,13 @@ const LoginForm = props => {
 
   return (
     <AuthForm>
+      {
+        next?.length > 0 &&
+          <>
+            <Alert message="Vui lòng đăng nhập để tiếp tục" type="error" />
+            <br />
+          </>
+      }
       <h2>Đăng nhập</h2>
       <Divider />
       <Form layout="vertical" onFinish={handleLogin} noValidate>

@@ -1,13 +1,14 @@
 import React from 'react';
 import { Layout, Menu } from 'antd';
-import { HashRouter, Switch, Route, useRouteMatch, useLocation, Link } from 'react-router-dom';
+import { HashRouter, Switch, Route, useRouteMatch, useLocation, Link, Redirect } from 'react-router-dom';
 import AdminHomePage from 'pages/admin';
+import AdminRealestatePage from 'pages/admin/real-estate';
 import AdminNewsPage from 'pages/admin/news';
 import AdminProjectsPage from 'pages/admin/projects';
-import withAdminRote from 'HOCs/AdminRoute';
+import AdminUserPage from 'pages/admin/user';
+import withAdminRote from 'HOCs/withAdminRoute';
 
 import './AdminLayout.scss';
-
 
 const { Header, Sider, Content } = Layout;
 
@@ -46,8 +47,11 @@ const AdminLayout = props => {
           <Content>
             <Switch>
               <Route path={`${path}/`} exact component={AdminHomePage} />
+              <Route path={`${path}/bds`} component={AdminRealestatePage} />
               <Route path={`${path}/tin-tuc`} component={AdminNewsPage} />
               <Route path={`${path}/du-an`} component={AdminProjectsPage} />
+              <Route path={`${path}/nguoi-dung`} component={AdminUserPage} />
+              <Route path={`${path}/*`} component={() => <Redirect to={`${path}/`} />} />
             </Switch>
           </Content>
         </Layout>

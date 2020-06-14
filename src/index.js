@@ -37,7 +37,9 @@ axios.interceptors.response.use(response => {
   notification.error({
     message: `Lỗi (${message})`,
     description: description
-  })
+  });
+
+  throw new Error(error);
 })
 
 ReactDOM.render(

@@ -7,9 +7,9 @@ const { Content } = Layout;
 
 const MainLayout = props => {
   return (
-    <Layout className="layout">
+    <Layout className="main-layout">
       <PageHeader />
-      <Content className="layout_content">
+      <Content className="main-layout_content">
 
         {
           props.children

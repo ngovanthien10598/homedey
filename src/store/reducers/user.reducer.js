@@ -2,7 +2,8 @@ import * as actionTypes from '../actionTypes';
 
 const initialState = {
   user: null,
-  token: null
+  accessToken: null,
+  refreshToken: null
 }
 
 export default function userReducer(state = initialState, action) {
@@ -21,13 +22,17 @@ export default function userReducer(state = initialState, action) {
       return {
         ...state,
         user: null,
-        token: null
+        accessToken: null
       }
-    case actionTypes.SET_TOKEN:
+    case actionTypes.SET_ACCESS_TOKEN:
       return {
         ...state,
-        user: null,
-        token: action.payload
+        accessToken: action.payload
+      }
+    case actionTypes.SET_REFRESH_TOKEN:
+      return {
+        ...state,
+        refreshToken: action.payload
       }
     default:
       return { ...state }

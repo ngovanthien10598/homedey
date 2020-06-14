@@ -2,13 +2,6 @@ import * as actionTypes from '../actionTypes';
 import { getProfileAPI } from 'services/user/profile';
 import { loginAPI } from 'services/auth/login';
 
-export function loginSuccess(token) {
-  return {
-    type: actionTypes.LOGIN,
-    payload: token
-  }
-}
-
 function getProfileSuccess(user) {
   return {
     type: actionTypes.GET_PROFILE,
@@ -21,19 +14,22 @@ export function loginAction(body) {
   return async dispatch => {
     try {
       const loginRes = await loginAPI(body);
-      const token = loginRes.data.data;
-      dispatch(loginSuccess(token));
-      dispatch(getProfileAction(token));
+      const responseData = loginRes.data;
+      const access_token = responseData.data.access_token;
+      const refresh_token = responseData.data.refresh_token;
+      dispatch(setAccessToken(access_token));
+      dispatch(setRefreshToken(refresh_token));
+      dispatch(getProfileAction(access_token));
     } catch (error) {
-      
+      console.log(error);
     }
   }
 }
 
-export function getProfileAction(token) {
+export function getProfileAction(access_token) {
   return async dispatch => {
     try {
-      const getProfileRes = await getProfileAPI(token);
+      const getProfileRes = await getProfileAPI(access_token);
       dispatch(getProfileSuccess(getProfileRes.data.data));
     } catch (error) {
       console.log({ error: error });
@@ -48,9 +44,16 @@ export function logoutAction() {
   }
 }
 
-export function setToken(token) {
+export function setAccessToken(access_token) {
   return {
-    type: actionTypes.SET_TOKEN,
-    payload: token
+    type: actionTypes.SET_ACCESS_TOKEN,
+    payload: access_token
+  }
+}
+
+export function setRefreshToken(refresh_token) {
+  return {
+    type: actionTypes.SET_REFRESH_TOKEN,
+    payload: refresh_token
   }
 }
