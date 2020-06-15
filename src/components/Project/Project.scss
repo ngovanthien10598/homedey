@@ -1,0 +1,12 @@
+.project {
+  margin-bottom: 45px !important;
+
+  &_content {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &_price {
+    font-weight: 700;
+  }
+}

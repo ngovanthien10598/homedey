@@ -17,10 +17,10 @@ const AdminLayout = props => {
   const { pathname } = useLocation();
   const adminRoutes = [
     { path: `${path}/`, name: 'Tổng quan' },
-    { path: `${path}/bds`, name: 'Quản lý bất động sản' },
-    { path: `${path}/du-an`, name: 'Quản lý dự án' },
-    { path: `${path}/tin-tuc`, name: 'Quản lý tin tức' },
-    { path: `${path}/nguoi-dung`, name: 'Quản lý người dùng' },
+    { path: `${path}/real-estate`, name: 'Quản lý bất động sản' },
+    { path: `${path}/project`, name: 'Quản lý dự án' },
+    { path: `${path}/news`, name: 'Quản lý tin tức' },
+    { path: `${path}/user`, name: 'Quản lý người dùng' },
   ]
   return (
     <HashRouter>
@@ -47,10 +47,10 @@ const AdminLayout = props => {
           <Content>
             <Switch>
               <Route path={`${path}/`} exact component={AdminHomePage} />
-              <Route path={`${path}/bds`} component={AdminRealestatePage} />
-              <Route path={`${path}/tin-tuc`} component={AdminNewsPage} />
-              <Route path={`${path}/du-an`} component={AdminProjectsPage} />
-              <Route path={`${path}/nguoi-dung`} component={AdminUserPage} />
+              <Route path={`${path}/real-estate`} component={AdminRealestatePage} />
+              <Route path={`${path}/news`} component={AdminNewsPage} />
+              <Route path={`${path}/project`} component={AdminProjectsPage} />
+              <Route path={`${path}/user`} component={AdminUserPage} />
               <Route path={`${path}/*`} component={() => <Redirect to={`${path}/`} />} />
             </Switch>
           </Content>

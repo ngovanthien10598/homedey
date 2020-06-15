@@ -9,7 +9,7 @@ const withUserRoute = Component => {
     const { user } = userState;
 
     if (!user) {
-      return <Redirect to={`/dang-nhap?next=${location.pathname}`} />
+      return <Redirect to={`/login?next=${location.pathname}`} />
     } else {
       return <Component {...props} />
     }

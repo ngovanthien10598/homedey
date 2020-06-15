@@ -1,0 +1,23 @@
+.upload-btn {
+  display: inline-flex;
+  width: 100px;
+  height: 100px;
+  border: 1px dashed #d9d9d9;
+  background-color: #fafafa;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: border-color .15s;
+  line-height: 0;
+
+  &:hover {
+    border-color: #16b5ff;
+  }
+
+  &_input {
+    display: none !important;
+  }
+}

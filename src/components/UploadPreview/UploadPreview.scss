@@ -1,0 +1,15 @@
+.upload-preview {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  line-height: 0;
+
+  &_img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 100%;
+  }
+}

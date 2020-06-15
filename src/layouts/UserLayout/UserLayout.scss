@@ -1,9 +1,4 @@
 .user-layout {
-  &_header {
-    z-index: 1;
-    position: fixed;
-    width: 100%;
-  }
 
   &_sider {
     min-height: 100vh;
@@ -11,8 +6,9 @@
   }
 
   &_content {
-    padding-top: 109px 45px 45px;
+    padding: 109px 45px 45px;
     background-color: #fff;
+    overflow: initial;
 
     @media screen and (min-width: 768px) {
       padding: 94px 30px 30px;

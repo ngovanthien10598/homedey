@@ -11,6 +11,7 @@ import NewsPage from 'pages/news';
 import LoginPage from 'pages/login';
 import RegisterPage from 'pages/register';
 import ProjectsPage from 'pages/projects';
+import ProjectDetailsPage from 'pages/projects/project-details';
 import VerifyPage from 'pages/verify-email';
 import UserLayout from 'layouts/UserLayout/UserLayout';
 import AdminLayout from 'layouts/AdminLayout/AdminLayout';
@@ -36,12 +37,13 @@ const App = props => {
     <Router>
       <Switch>
         <Route path="/" exact component={HomePage} />
-        <Route path="/thong-tin" component={AboutPage} />
-        <Route path="/bat-dong-san" component={ListingsPage} />
-        <Route path="/du-an" component={ProjectsPage} />
-        <Route path="/tin-tuc" component={NewsPage} />
-        <Route path="/dang-nhap" component={LoginPage} />
-        <Route path="/dang-ky" component={RegisterPage} />
+        <Route path="/about" component={AboutPage} />
+        <Route path="/listings" component={ListingsPage} />
+        <Route path="/project" exact component={ProjectsPage} />
+        <Route path="/project/:slug" component={ProjectDetailsPage} />
+        <Route path="/news" component={NewsPage} />
+        <Route path="/login" component={LoginPage} />
+        <Route path="/register" component={RegisterPage} />
         <Route path="/verify-email" component={VerifyPage} />
         <Route path="/me" component={UserLayout} />
         <Route path="/admin" component={AdminLayout} />

@@ -20,7 +20,7 @@ const withAdminRoute = Component => {
     })
 
     if (!user) {
-      return <Redirect to={`/dang-nhap?next=${location.pathname}`} />
+      return <Redirect to={`/login?next=${location.pathname}`} />
     } else {
       if (!user.is_staff) {
         return <Redirect to="/" />

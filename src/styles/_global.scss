@@ -2,7 +2,6 @@ body {
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
   font-weight: 400;
-  background: #f0f2f5;
   color: #2b2e35;
 }
 
@@ -27,4 +26,9 @@ a:active {
   text-decoration: none;
   text-shadow: rgba(0, 0, 0, 0.01) 0 0 1px;
   transition: all 200ms ease;
+}
+
+.ant-layout-content {
+  overflow: initial !important;
+  background-color: #fff;
 }

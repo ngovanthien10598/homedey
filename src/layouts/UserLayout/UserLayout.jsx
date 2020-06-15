@@ -4,6 +4,7 @@ import { HashRouter, Switch, Route, useRouteMatch, useLocation, Link, Redirect }
 import withUserRoute from 'HOCs/withUserRoute';
 import UserHomePage from 'pages/user';
 import UserRealEstatePage from 'pages/user/real-estate';
+import UserRealEstateCreatePage from 'pages/user/real-estate-create';
 
 import './UserLayout.scss';
 
@@ -15,7 +16,7 @@ const UserLayout = props => {
   const { pathname } = useLocation();
   const adminRoutes = [
     { path: `${path}/`, name: 'Tài khoản' },
-    { path: `${path}/bds`, name: 'Bất động sản' },
+    { path: `${path}/real-estate`, name: 'Bất động sản' },
   ]
   return (
     <HashRouter>
@@ -42,7 +43,8 @@ const UserLayout = props => {
           <Content className="user-layout_content">
             <Switch>
               <Route path={`${path}/`} exact component={UserHomePage} />
-              <Route path={`${path}/bds`} component={UserRealEstatePage} />
+              <Route path={`${path}/real-estate`} exact component={UserRealEstatePage} />
+              <Route path={`${path}/real-estate/create`} component={UserRealEstateCreatePage} />
               <Route path={`${path}/*`} component={() => <Redirect to={`${path}/`} />} />
             </Switch>
           </Content>

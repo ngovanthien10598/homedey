@@ -11,10 +11,10 @@ const { Header } = Layout;
 const PageHeader = (props) => {
 
   const menuItems = [
-    { name: 'Thông tin', path: '/thong-tin' },
-    { name: 'Bất động sản', path: '/bat-dong-san' },
-    { name: 'Dự án', path: '/du-an' },
-    { name: 'Tin tức', path: '/tin-tuc' },
+    { name: 'Thông tin', path: '/about' },
+    { name: 'Bất động sản', path: '/listings' },
+    { name: 'Dự án', path: '/project' },
+    { name: 'Tin tức', path: '/news' },
     // { name: 'Liên hệ', path: '/lien-he' },
   ]
   const location = useLocation();
@@ -52,17 +52,17 @@ const PageHeader = (props) => {
             <Menu.Item key="/me/">
               <Link to={`${user ? (user.is_staff ? '/admin/' : '/me/') : ''}`}>{user ? user.first_name + ' ' + user.last_name : userLocal}</Link>
             </Menu.Item>
-            <Menu.Item key="/dang-xuat">
+            <Menu.Item key="/logout">
               <Link to="/" onClick={handleLogout}>Đăng xuất</Link>
             </Menu.Item>
           </Menu>
           :
           <Menu className="header_menu header_menu--auth" theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-            <Menu.Item key="/dang-nhap">
-              <Link to="/dang-nhap">Đăng nhập</Link>
+            <Menu.Item key="/login">
+              <Link to="/login">Đăng nhập</Link>
             </Menu.Item>
-            <Menu.Item key="/dang-ky">
-              <Link to="/dang-ky">Đăng ký</Link>
+            <Menu.Item key="/register">
+              <Link to="/register">Đăng ký</Link>
             </Menu.Item>
           </Menu>
       }
