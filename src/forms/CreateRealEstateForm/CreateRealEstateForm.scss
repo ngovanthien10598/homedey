@@ -1,12 +1,5 @@
 .create-re-form {
   &_map {
-    position: relative;
     height: 500px;
-
-    &::after {
-      content: '';
-      display: block;
-      padding-top: 100%;
-    }
   }
 }

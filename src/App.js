@@ -5,8 +5,8 @@ import {
   Route
 } from 'react-router-dom';
 import HomePage from 'pages';
+import RealEstatePage from 'pages/real-estate';
 import AboutPage from 'pages/about';
-import ListingsPage from 'pages/listings';
 import NewsPage from 'pages/news';
 import LoginPage from 'pages/login';
 import RegisterPage from 'pages/register';
@@ -19,6 +19,7 @@ import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 import Cookies from 'js-cookie';
 import { setAccessToken, getProfileAction } from 'store/actions/user.action';
 import { useDispatch, useSelector } from 'react-redux';
+
 
 
 const App = props => {
@@ -37,11 +38,11 @@ const App = props => {
     <Router>
       <Switch>
         <Route path="/" exact component={HomePage} />
-        <Route path="/about" component={AboutPage} />
-        <Route path="/listings" component={ListingsPage} />
+        <Route path="/real-estate" component={RealEstatePage} />
         <Route path="/project" exact component={ProjectsPage} />
         <Route path="/project/:slug" component={ProjectDetailsPage} />
         <Route path="/news" component={NewsPage} />
+        <Route path="/about" component={AboutPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
         <Route path="/verify-email" component={VerifyPage} />

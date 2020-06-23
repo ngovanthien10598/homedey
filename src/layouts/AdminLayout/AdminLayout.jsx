@@ -7,17 +7,18 @@ import AdminNewsPage from 'pages/admin/news';
 import AdminProjectsPage from 'pages/admin/projects';
 import AdminUserPage from 'pages/admin/user';
 import withAdminRote from 'HOCs/withAdminRoute';
+import Header from 'components/Header/Header';
 
 import './AdminLayout.scss';
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const AdminLayout = props => {
   const { path } = useRouteMatch();
   const { pathname } = useLocation();
   const adminRoutes = [
     { path: `${path}/`, name: 'Tổng quan' },
-    { path: `${path}/real-estate`, name: 'Quản lý bất động sản' },
+    { path: `${path}/real-estate`, name: 'Quản lý tin bất động sản' },
     { path: `${path}/project`, name: 'Quản lý dự án' },
     { path: `${path}/news`, name: 'Quản lý tin tức' },
     { path: `${path}/user`, name: 'Quản lý người dùng' },
@@ -25,13 +26,9 @@ const AdminLayout = props => {
   return (
     <HashRouter>
       <Layout className="admin-layout">
-        <Header className="admin-layout_header">
-          <Link to="/" className="admin-layout_brand">
-            <img src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="Homedey" width={32} />
-          </Link>
-        </Header>
+        <Header isDashboard />
         <Layout>
-          <Sider width={200} className="admin-layout_sider">
+          <Sider width={250} className="admin-layout_sider">
             <Menu theme="dark" mode="vertical" selectedKeys={[pathname]}>
               {
                 adminRoutes.map(route => (
@@ -44,7 +41,7 @@ const AdminLayout = props => {
               }
             </Menu>
           </Sider>
-          <Content>
+          <Content className="admin-layout_content">
             <Switch>
               <Route path={`${path}/`} exact component={AdminHomePage} />
               <Route path={`${path}/real-estate`} component={AdminRealestatePage} />

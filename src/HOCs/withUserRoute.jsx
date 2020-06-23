@@ -1,14 +1,13 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Redirect, useLocation } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const withUserRoute = Component => {
   return function Wrapper(props) {
     const location = useLocation();
-    const userState = useSelector(state => state.userState);
-    const { user } = userState;
+    const accessToken = Cookies.get('access');
 
-    if (!user) {
+    if (!accessToken || accessToken.length === 0) {
       return <Redirect to={`/login?next=${location.pathname}`} />
     } else {
       return <Component {...props} />

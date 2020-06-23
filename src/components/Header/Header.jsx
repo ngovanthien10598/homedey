@@ -1,51 +1,84 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import './Header.scss';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutAction } from 'store/actions/user.action';
-import Cookies from 'js-cookie';
+import { useEffect } from 'react';
+import { getAllRealEstateCategoriesAPI } from 'services/user/real-estate-category';
+import SubMenu from 'antd/lib/menu/SubMenu';
 
 const { Header } = Layout;
 
 const PageHeader = (props) => {
 
   const menuItems = [
-    { name: 'Thông tin', path: '/about' },
-    { name: 'Bất động sản', path: '/listings' },
     { name: 'Dự án', path: '/project' },
     { name: 'Tin tức', path: '/news' },
+    { name: 'Thông tin', path: '/about' },
     // { name: 'Liên hệ', path: '/lien-he' },
   ]
   const location = useLocation();
+  const history = useHistory();
   const dispatch = useDispatch();
+  const [categories, setCategories] = useState(null);
   const userState = useSelector(state => state.userState);
   const { user } = userState;
   const userLocal = localStorage.getItem('user');
 
+  useEffect(() => {
+    const getCategories = async () => {
+      const response = await getAllRealEstateCategoriesAPI();
+      setCategories(response.data);
+    }
+    getCategories();
+  })
+
   const handleLogout = () => {
+    history.replace('/');
     dispatch(logoutAction());
-    Cookies.remove('access');
-    localStorage.removeItem('user');
   }
 
   return (
-    <Header className="header">
+    <Header  className={`header${props.isDashboard ? ' header--dashboard' : ''}`}>
       <Link className="header_brand" to="/">
         <img src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="Homedey" width="32" />
       </Link>
 
-      <Menu className="header_menu" theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-        {
-          menuItems.map(menu => {
-            return (
-              <Menu.Item key={menu.path}>
-                <Link to={menu.path}>{menu.name}</Link>
-              </Menu.Item>
-            )
-          })
-        }
-      </Menu>
+      {
+        !props.isDashboard &&
+        <Menu className="header_menu" theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
+          <SubMenu title={<Link to="/real-estate?for_rent=false" className="header_submenu">Nhà đất bán</Link>}>
+            {
+              categories &&
+              categories.filter(c => !c.for_rent).map(c => {
+                return <Menu.Item key={`/for-sale-${c.id}`}>
+                  <Link to={`/real-estate?for_rent=false&&type=${c.id}`}>Bán {c.name}</Link>
+                </Menu.Item>
+              })
+            }
+          </SubMenu>
+          <SubMenu title={<Link to="/real-estate?for_rent=true" className="header_submenu">Nhà đất cho thuê</Link>}>
+            {
+              categories &&
+              categories.filter(c => c.for_rent).map(c => {
+                return <Menu.Item key={`/real-estate?for_rent=true${c.id}`}>
+                  <Link to={`/real-estate?for_rent=true&&type=${c.id}`}>Cho thuê {c.name}</Link>
+                </Menu.Item>
+              })
+            }
+          </SubMenu>
+          {
+            menuItems.map(menu => {
+              return (
+                <Menu.Item key={menu.path}>
+                  <Link to={menu.path}>{menu.name}</Link>
+                </Menu.Item>
+              )
+            })
+          }
+        </Menu>
+      }
       {
         user || userLocal ?
           <Menu className="header_menu header_menu--auth" theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>

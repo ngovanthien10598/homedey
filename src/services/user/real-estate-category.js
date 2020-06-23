@@ -1,6 +1,6 @@
 import axios from 'axios';
 import apiPrefix from '../apiPrefix';
 
-export function getAllRealEstateCategories() {
+export function getAllRealEstateCategoriesAPI() {
   return axios.get(`${apiPrefix}/user/real-estate-category/`);
 }

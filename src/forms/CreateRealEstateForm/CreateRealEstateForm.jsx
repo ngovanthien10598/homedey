@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Row, Col, Select, Button } from 'antd';
-import { getAllRealEstateCategories } from 'services/user/real-estate-category';
+import { getAllRealEstateCategoriesAPI } from 'services/user/real-estate-category';
 import { getAllCities, getDistrictsByCity, getWardsByDistrict, getStreetsByDistrict } from 'services/user/address';
-import { getAllProjects } from 'services/user/project';
+import { getProjectsByDistrict } from 'services/user/project';
 import { uploadImages, createRealEstate } from 'services/user/real-estate';
-import GoogleMapReact from 'google-map-react';
 import MapMarker from 'components/MapMarker/MapMarker';
 import UploadButton from 'components/UploadButton/UploadButton';
 import { useRef } from 'react';
 import UploadPreview from 'components/UploadPreview/UploadPreview';
 import './CreateRealEstateForm.scss';
 import { useSelector } from 'react-redux';
+import LLMap from 'components/LLMap/LLMap';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -36,6 +36,7 @@ const CreateRealEstateForm = props => {
 
   // Others states
   const [clickedPosition, setClickedPosition] = useState({ lat: 10.029948, lng: 105.770615 });
+  const [type, setType] = useState({ for_rent: false });
 
   // Other hooks
   const fileRef = useRef();
@@ -45,7 +46,7 @@ const CreateRealEstateForm = props => {
   const getRealEstateCategories = async () => {
     setLoadingRECategories(true);
     try {
-      const RECategoriesResponse = await getAllRealEstateCategories()
+      const RECategoriesResponse = await getAllRealEstateCategoriesAPI()
       setRECategories(RECategoriesResponse.data);
     } catch (error) {
       console.log({ error });
@@ -86,40 +87,31 @@ const CreateRealEstateForm = props => {
     setLoadingStreets(true);
     setWards(null);
     setStreets(null);
+    setProjects(null);
     try {
-      const [getWardsResponse, getStreetsResponse] = await Promise.all([
+      const [getWardsResponse, getStreetsResponse, getProjectsResponse] = await Promise.all([
         getWardsByDistrict(districtId),
-        getStreetsByDistrict(districtId)
+        getStreetsByDistrict(districtId),
+        getProjectsByDistrict(districtId)
       ]);
       setWards(getWardsResponse.data);
       setStreets(getStreetsResponse.data);
+      setProjects(getProjectsResponse.data);
     } catch (error) {
       console.log({ error });
     }
     setLoadingWards(false);
     setLoadingStreets(false);
+    setLoadingProjects(false);
   }
 
-
-  // Get projects
-  const getProjects = async () => {
-    setLoadingProjects(true);
-    try {
-      const getProjectsResponse = await getAllProjects();
-      setProjects(getProjectsResponse.data.results);
-    } catch (error) {
-      console.log({ error });
-    }
-    setLoadingProjects(false);
+  const handleCategoryTypeChange = e => {
+    setType({ for_rent: e });
   }
 
 
   const handleMapClick = e => {
-    const newPosition = {
-      lat: e.lat,
-      lng: e.lng
-    }
-    setClickedPosition(newPosition);
+    setClickedPosition(e.latlng);
   }
 
   const handleImageChange = e => {
@@ -185,7 +177,6 @@ const CreateRealEstateForm = props => {
       await Promise.all([
         getRealEstateCategories(),
         getCities(),
-        getProjects()
       ])
     }
     getData();
@@ -209,21 +200,23 @@ const CreateRealEstateForm = props => {
             <Col flex="1">
               <Form.Item label="Giá"
                 name="price"
+                initialValue={1}
                 rules={[
                   { required: true, message: 'Vui lòng nhập giá' },
                   { pattern: /^[1-9][0-9]*$/g, message: "Giá không hợp lệ" }
                 ]}>
-                <Input defaultValue={1} type="number" suffix="VNĐ" min={1} />
+                <Input type="number" suffix="VNĐ" min={1} />
               </Form.Item>
             </Col>
             <Col flex="1">
               <Form.Item label="Năm xây dựng"
                 name="year_build"
+                initialValue={2000}
                 rules={[
                   { required: true, message: 'Vui lòng nhập năm xây dựng' },
                   { pattern: /^\d{4}$/g, message: "Năm không hợp lệ" }
                 ]}>
-                <Input min={0} defaultValue={2000} type="number" />
+                <Input min={0} type="number" />
               </Form.Item>
             </Col>
           </Row>
@@ -231,72 +224,90 @@ const CreateRealEstateForm = props => {
             <Col flex="1">
               <Form.Item label="Số phòng ngủ"
                 name="bedroom"
+                initialValue={0}
                 rules={[
                   { required: true, message: 'Vui lòng nhập phòng ngủ' },
                   { pattern: /^[0-9]+$/g, message: "Số không hợp lệ" }
                 ]}>
-                <Input defaultValue={0} type="number" suffix="Phòng" min={0} />
+                <Input type="number" suffix="Phòng" min={0} />
               </Form.Item>
             </Col>
             <Col flex="1">
               <Form.Item label="Số phòng tắm"
                 name="bathroom"
+                initialValue={0}
                 rules={[
                   { required: true, message: 'Vui lòng nhập phòng tắm' },
                   { pattern: /^[0-9]+$/g, message: "Số không hợp lệ" }
                 ]}>
-                <Input defaultValue={0} type="number" suffix="Phòng" min={0} />
+                <Input type="number" suffix="Phòng" min={0} />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={10}>
             <Col flex="1">
-              <Form.Item label="Diện tích nền nhà" name="area">
-                <Input type="number" suffix={<span>m<sup>2</sup></span>} />
+              <Form.Item
+                label="Diện tích nền nhà"
+                name="area"
+                initialValue={1}
+                rules={[
+                  { required: true, message: 'Vui lòng nhập diện tích' },
+                  { pattern: /^[0-9]+$/g, message: 'Diện tích không hợp lệ' }
+                ]}>
+                <Input type="number" min={1} suffix={<span>m<sup>2</sup></span>} />
               </Form.Item>
             </Col>
             <Col flex="1">
-              <Form.Item label="Tổng diện tích" name="lot_size">
+              <Form.Item
+                label="Tổng diện tích"
+                name="lot_size"
+                initialValue={1}
+                rules={[
+                  { required: true, message: 'Vui lòng nhập diện tích' },
+                  { pattern: /^[0-9]+$/g, message: 'Diện tích không hợp lệ' }
+                ]}>
                 <Input type="number" suffix={<span>m<sup>2</sup></span>} />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={10}>
             <Col flex="1">
-              <Form.Item label="Loại tin" name="real_estate_category_id">
-                <Select loading={isLoadingRECategories} defaultValue="Chọn loại tin">
+              <Form.Item label="Hình thức">
+                <Select onChange={handleCategoryTypeChange} defaultValue={false}>
+                  <Option value={false}>Bán</Option>
+                  <Option value={true}>Cho thuê</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col flex="3">
+              <Form.Item
+                label="Loại tin"
+                name="real_estate_category_id"
+                initialValue="Chọn loại tin"
+                rules={[
+                  { required: true, message: 'Vui lòng chọn loại tin' }
+                ]}>
+                <Select loading={isLoadingRECategories}>
                   <Option disabled value="Chọn loại tin">Chọn loại tin</Option>
                   {
                     RECategories &&
-                    RECategories.map(category => (
-                      <Option
+                    RECategories.map(category => {
+                      const name = `${category.name.charAt(0).toUpperCase()}${category.name.substr(1)}`
+                      return category.for_rent === type.for_rent && <Option
                         key={category.id}
-                        value={category.id}>
-                        {`${category.name.charAt(0).toUpperCase()}${category.name.substr(1)} ${category.for_rent ? '(cho thuê)' : ''}`}
+                        value={category.id} >
+                        {name}
                       </Option>
+                    }
                     )
-                    )
-                  }
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col flex="1">
-              <Form.Item label="Dự án">
-                <Select loading={isLoadingProjects} name="project" defaultValue="Chọn dự án">
-                  <Option value="Chọn dự án" disabled>Chọn dự án</Option>
-                  {
-                    projects &&
-                    projects.map(p => {
-                      return (
-                        <Option key={p.id} value={p.id}>{p.name}</Option>
-                      )
-                    })
                   }
                 </Select>
               </Form.Item>
             </Col>
           </Row>
-          <Form.Item label="Nội dung" name="detail">
+          <Form.Item label="Nội dung" name="detail" rules={[
+            { required: true, message: 'Vui lòng nhập nội dung' }
+          ]}>
             <TextArea placeholder="Nhập nội dung bài viết..." rows="10" />
           </Form.Item>
         </Col>
@@ -304,26 +315,20 @@ const CreateRealEstateForm = props => {
         {/* Col 2 */}
         <Col xs={24} lg={12}>
           <Form.Item label="Bản đồ">
-            <div className="create-re-form_map">
-              <GoogleMapReact
-                defaultZoom={11}
-                defaultCenter={{ lat: 10.029948, lng: 105.770615 }}
-                bootstrapURLKeys={{ key: 'AIzaSyAfOlOJJlejZjLTcM6RDZMUc3OGGuLCX7Y' }}
-                onClick={handleMapClick}
-                yesIWantToUseGoogleMapApiInternals>
-                <MapMarker lat={clickedPosition.lat} lng={clickedPosition.lng} />
-              </GoogleMapReact>
+            <div>
+              <LLMap className="create-re-form_map" onClick={handleMapClick}>
+                <MapMarker position={clickedPosition} />
+              </LLMap>
             </div>
           </Form.Item>
           <Row gutter={10}>
             <Col flex="1">
-              <Form.Item label="Tỉnh / thành phố" name="city_id" rules={[
+              <Form.Item initialValue={null} label="Tỉnh / thành phố" name="city_id" rules={[
                 { required: true, message: 'Vui lòng chọn tỉnh / thành phố' }
               ]}>
                 <Select
                   loading={isLoadingCities}
                   disabled={isLoadingCities}
-                  defaultValue={null}
                   onChange={handleCityChange}
                   showSearch>
                   <Option disabled value={null}>Chọn tỉnh/thành phố</Option>
@@ -342,15 +347,14 @@ const CreateRealEstateForm = props => {
               </Form.Item>
             </Col>
             <Col flex="1">
-              <Form.Item label="Quận / huyện" name="district_id" rules={[
+              <Form.Item initialValue={null} label="Quận / huyện" name="district_id" rules={[
                 { required: true, message: 'Vui lòng chọn quận / huyện' }
               ]}>
                 <Select
                   loading={isLoadingDistricts}
                   disabled={isLoadingDistricts}
-                  onChange={handleDistrictChange}
-                  defaultValue="null">
-                  <Option disabled value="null">Chọn quận / huyện</Option>
+                  onChange={handleDistrictChange}>
+                  <Option disabled value={null}>Chọn quận / huyện</Option>
                   {
                     districts &&
                     districts.map(district => (
@@ -368,14 +372,13 @@ const CreateRealEstateForm = props => {
           </Row>
           <Row gutter={10}>
             <Col flex="1">
-              <Form.Item label="Xã / phường / thị trấn" name="ward_id" rules={[
+              <Form.Item initialValue={null} label="Xã / phường / thị trấn" name="ward_id" rules={[
                 { required: true, message: 'Vui lòng chọn xã / phường / thị trấn' }
               ]}>
                 <Select
                   loading={isLoadingWards}
-                  disabled={isLoadingWards}
-                  defaultValue="null">
-                  <Option disabled value="null">Chọn xã / phường / thị trấn</Option>
+                  disabled={isLoadingWards}>
+                  <Option disabled value={null}>Chọn xã / phường / thị trấn</Option>
                   {
                     wards &&
                     wards.map(ward => (
@@ -391,12 +394,11 @@ const CreateRealEstateForm = props => {
               </Form.Item>
             </Col>
             <Col flex="1">
-              <Form.Item label="Đường" name="street_id">
+              <Form.Item label="Đường" name="street_id" initialValue={null}>
                 <Select
                   loading={isLoadingStreets}
-                  disabled={isLoadingStreets}
-                  defaultValue="null">
-                  <Option disabled value="null">Chọn đường</Option>
+                  disabled={isLoadingStreets}>
+                  <Option disabled>Chọn đường</Option>
                   {
                     streets &&
                     streets.map(str => (
@@ -412,6 +414,19 @@ const CreateRealEstateForm = props => {
               </Form.Item>
             </Col>
           </Row>
+          <Form.Item label="Dự án" name="project_id" initialValue={null}>
+            {/* <Select loading={isLoadingProjects} disabled={isLoadingProjects && true}>
+              <Option value="Chọn dự án" disabled>Chọn dự án</Option>
+              {
+                projects &&
+                projects.map(p => {
+                  return (
+                    <Option key={p.id} value={p.id}>{p.name}</Option>
+                  )
+                })
+              }
+            </Select> */}
+          </Form.Item>
         </Col>
       </Row>
       <Form.Item label="Hình ảnh">
@@ -426,7 +441,7 @@ const CreateRealEstateForm = props => {
       <Form.Item>
         <Button loading={isLoading} type="primary" htmlType="submit" size="large">Xác nhận</Button>
       </Form.Item>
-    </Form>
+    </Form >
   )
 }
 

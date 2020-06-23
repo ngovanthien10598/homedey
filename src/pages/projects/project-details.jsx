@@ -1,7 +1,7 @@
 import React from 'react';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import { Carousel, Row, Col, Divider } from 'antd';
-import { Map, TileLayer } from 'react-leaflet';
+import LLMap from 'components/LLMap/LLMap';
 
 const ProjectDetails = props => {
 
@@ -44,11 +44,7 @@ const ProjectDetails = props => {
               </ul>
             </div>
             <div className="project-details_map">
-              <Map id="project-map" center={{lng: 106, lat: 16}} zoom={5} onclick={handleMapClick}>
-                <TileLayer
-                  url="https://maps.vnpost.vn/tm6/{z}/{x}/{y}{r}.png?apikey=f50f96fd875c023e6fd8acac6d9a7e0d15699071d3259542"
-                />
-              </Map>
+              <LLMap id="project-map" onClick={handleMapClick} />
             </div>
           </Col>
           <Col xs={24} md={8}>

@@ -2,16 +2,9 @@
 
   &_sider {
     min-height: 100vh;
-    padding-top: 64px;
   }
 
   &_content {
-    padding: 109px 45px 45px;
-    background-color: #fff;
-    overflow: initial;
-
-    @media screen and (min-width: 768px) {
-      padding: 94px 30px 30px;
-    }
+    padding: 30px;
   }
 }

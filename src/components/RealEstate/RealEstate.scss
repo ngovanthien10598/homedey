@@ -1,0 +1,31 @@
+.real-estate {
+
+  &_price {
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  &_link:hover {
+    color: #1890ff !important;
+  }
+
+  &--thumbnail {
+    max-width: 100%;
+    margin-bottom: 20px !important;
+  
+    .ant-card-body {
+      padding: 10px 0 0;
+    }
+
+    .ant-card-meta-detail,
+    .ant-card-meta-title {
+      overflow: initial;
+    }
+
+    h3 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

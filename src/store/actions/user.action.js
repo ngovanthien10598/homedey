@@ -1,6 +1,7 @@
 import * as actionTypes from '../actionTypes';
 import { getProfileAPI } from 'services/user/profile';
 import { loginAPI } from 'services/auth/login';
+import Cookies from 'js-cookie';
 
 function getProfileSuccess(user) {
   return {
@@ -17,6 +18,8 @@ export function loginAction(body) {
       const responseData = loginRes.data;
       const access_token = responseData.data.access_token;
       const refresh_token = responseData.data.refresh_token;
+      Cookies.set('access', access_token, { expires: 10 * 60 });
+      Cookies.set('refresh', refresh_token, { expires: 24 * 3660 });
       dispatch(setAccessToken(access_token));
       dispatch(setRefreshToken(refresh_token));
       dispatch(getProfileAction(access_token));
@@ -39,12 +42,15 @@ export function getProfileAction(access_token) {
 
 export function logoutAction() {
   localStorage.removeItem('user');
+  Cookies.remove('access');
+  Cookies.remove('refresh');
   return {
     type: actionTypes.LOGOUT
   }
 }
 
 export function setAccessToken(access_token) {
+  Cookies.set('access', access_token, { expires: 10 * 60 });
   return {
     type: actionTypes.SET_ACCESS_TOKEN,
     payload: access_token
@@ -52,6 +58,7 @@ export function setAccessToken(access_token) {
 }
 
 export function setRefreshToken(refresh_token) {
+  Cookies.set('refresh', refresh_token, { expires: 24 * 3660 });
   return {
     type: actionTypes.SET_REFRESH_TOKEN,
     payload: refresh_token

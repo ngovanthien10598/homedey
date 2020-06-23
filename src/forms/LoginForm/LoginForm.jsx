@@ -5,7 +5,6 @@ import { MailOutlined, KeyOutlined } from '@ant-design/icons';
 import AuthForm from 'containers/AuthForm/AuthForm';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginAction } from 'store/actions/user.action';
-import Cookies from 'js-cookie';
 import { useEffect } from 'react';
 
 const LoginForm = props => {
@@ -33,7 +32,6 @@ const LoginForm = props => {
   useEffect(() => {
     const { user, accessToken } = userState;
     if (user && accessToken) {
-      Cookies.set('access', accessToken, { expires: 10 * 60 });
       localStorage.setItem('user', user.first_name + ' ' + user.last_name);
       if (search.length > 0) {
         if (next.length > 0) {

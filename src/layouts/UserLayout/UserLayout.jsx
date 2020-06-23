@@ -5,11 +5,13 @@ import withUserRoute from 'HOCs/withUserRoute';
 import UserHomePage from 'pages/user';
 import UserRealEstatePage from 'pages/user/real-estate';
 import UserRealEstateCreatePage from 'pages/user/real-estate-create';
+import Header from 'components/Header/Header';
 
 import './UserLayout.scss';
+import RealEstateDetails from 'pages/shared/real-estate-detail';
 
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 
 const UserLayout = props => {
   const { path } = useRouteMatch();
@@ -21,11 +23,7 @@ const UserLayout = props => {
   return (
     <HashRouter>
       <Layout className="user-layout">
-        <Header className="user-layout_header">
-          <Link to="/" className="user-layout_brand">
-            <img src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="Homedey" width={32} />
-          </Link>
-        </Header>
+        <Header isDashboard />
         <Layout>
           <Sider breakpoint="md" collapsedWidth={0} width={200} className="user-layout_sider">
             <Menu theme="dark" mode="vertical" selectedKeys={[pathname]}>
@@ -45,6 +43,7 @@ const UserLayout = props => {
               <Route path={`${path}/`} exact component={UserHomePage} />
               <Route path={`${path}/real-estate`} exact component={UserRealEstatePage} />
               <Route path={`${path}/real-estate/create`} component={UserRealEstateCreatePage} />
+              <Route path={`${path}/real-estate/:realEstateId`} component={RealEstateDetails} />
               <Route path={`${path}/*`} component={() => <Redirect to={`${path}/`} />} />
             </Switch>
           </Content>

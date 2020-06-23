@@ -1,0 +1,37 @@
+.re-details-page {
+  td {
+    padding: 10px 0;
+    padding-right: 45px;
+
+    &:nth-child(odd) {
+      font-weight: 500;
+    }
+  }
+
+  &_summary {
+    margin-bottom: 60px;
+  }
+
+  &_details {
+    margin-bottom: 60px;
+  }
+
+  &_images {
+    margin-bottom: 60px;
+    img {
+      display: block;
+      width: auto;
+      max-width: 700px;
+    }
+  }
+
+  &_map {
+    clear: both;
+    margin-bottom: 60px;
+  }
+
+  #real-estate-map {
+    height: 400px;
+    max-width: 700px;
+  }
+}

@@ -1,0 +1,18 @@
+.layout-aside {
+  display: flex;
+
+  &_main {
+    flex: 1;
+  }
+
+  &_aside {
+    flex-basis: 250px;
+    max-width: 250px;
+    flex-shrink: 0;
+    margin-left: 50px;
+
+    @media screen and (max-width: 1200px) {
+      display: none;
+    }
+  }
+}

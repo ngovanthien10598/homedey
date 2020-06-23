@@ -1,14 +1,11 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { Marker } from 'react-leaflet';
 
 import './MapMarker.scss';
 
-const MapMarker = () => {
+const MapMarker = props => {
   return (
-    <div className="map-marker">
-      <FontAwesomeIcon color={'#ff2222'} icon={faMapMarkerAlt} />
-    </div>
+    <Marker className="map-marker" position={props.position}></Marker>
   )
 }
 
