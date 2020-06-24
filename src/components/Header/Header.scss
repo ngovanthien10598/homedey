@@ -27,8 +27,15 @@
 
   &_submenu {
     color: rgba($color: #fff, $alpha: 0.65) !important;
+    display: block;
+    width: 100%;
+    height: 100%;
 
     .ant-menu-submenu-title:hover & {
+      color: #fff !important;
+    }
+
+    .ant-menu-item-selected & {
       color: #fff !important;
     }
   }

@@ -20,6 +20,13 @@ const LayoutWithAside = props => {
         </div>
         <h3>Gần đây</h3>
         <Divider style={{marginTop: 0}}/>
+        <div>
+          {
+            Array(3).fill().map((_, index) => {
+              return <RealEstate thumbnail key={index} />
+            })
+          }
+        </div>
       </aside>
     </div>
   )

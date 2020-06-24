@@ -1,0 +1,22 @@
+.news {
+  display: flex;
+  max-width: 900px;
+  
+  &:not(:last-child) {
+    margin-bottom: 50px;
+  }
+
+  &_thumbnail {
+    flex-shrink: 0;
+    flex-basis: 200px;
+    margin-right: 25px;
+  }
+
+  &_summary {
+    opacity: .8;
+  }
+
+  &_date {
+    opacity: .8;
+  }
+}

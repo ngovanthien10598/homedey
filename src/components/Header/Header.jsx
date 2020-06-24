@@ -25,6 +25,7 @@ const PageHeader = (props) => {
   const userState = useSelector(state => state.userState);
   const { user } = userState;
   const userLocal = localStorage.getItem('user');
+  const href = window.location.href;
 
   useEffect(() => {
     const getCategories = async () => {
@@ -32,7 +33,7 @@ const PageHeader = (props) => {
       setCategories(response.data);
     }
     getCategories();
-  })
+  }, []);
 
   const handleLogout = () => {
     history.replace('/');
@@ -48,7 +49,9 @@ const PageHeader = (props) => {
       {
         !props.isDashboard &&
         <Menu className="header_menu" theme="dark" mode="horizontal" selectedKeys={[location.pathname]}>
-          <SubMenu title={<Link to="/real-estate?for_rent=false" className="header_submenu">Nhà đất bán</Link>}>
+          <SubMenu
+            className={`${href.includes('/real-estate?for_rent=false') ? ' ant-menu-item-selected' : ''}`}
+            title={<Link to="/real-estate?for_rent=false" className="header_submenu">Nhà đất bán</Link>}>
             {
               categories &&
               categories.filter(c => !c.for_rent).map(c => {
@@ -58,7 +61,9 @@ const PageHeader = (props) => {
               })
             }
           </SubMenu>
-          <SubMenu title={<Link to="/real-estate?for_rent=true" className="header_submenu">Nhà đất cho thuê</Link>}>
+          <SubMenu
+            className={`${href.includes('/real-estate?for_rent=true') ? ' ant-menu-item-selected' : ''}`}
+            title={<Link to="/real-estate?for_rent=true" className="header_submenu">Nhà đất cho thuê</Link>}>
             {
               categories &&
               categories.filter(c => c.for_rent).map(c => {

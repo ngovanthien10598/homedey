@@ -6,18 +6,27 @@ import { Link } from 'react-router-dom';
 
 const Project = props => {
   return (
-    <Link to="/project/slug">
-      <Card
-        className="project"
-        hoverable
-        cover={<img src="//via.placeholder.com/400x300" alt="cover" />}>
-        <Card.Meta title={<h3>Tên dự án</h3>} />
+    <Card
+      className={`project${props.thumbnail ? ' project--thumbnail' : ''}`}
+      bordered={!props.thumbnail}
+      cover={<Link className="project_link" to="/project/slug" title="Lorem ipsum dolor sit amet consectetur adipisicing elit.">
+        <img src="//via.placeholder.com/800x600" alt="cover" />
+      </Link>}>
+      <Card.Meta title={
+        <h3><small>
+          <Link className="project_link" to="/project/slug" title="Lorem ipsum dolor sit amet consectetur adipisicing elit.">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          </Link>
+        </small></h3>
+      } />
+      {
+        !props.thumbnail &&
         <div className="project_content">
           <div className="project_price">Giá</div>
           <div className="project_city">Tỉnh/TP</div>
         </div>
-      </Card>
-    </Link>
+      }
+    </Card>
   )
 }
 
