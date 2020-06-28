@@ -6,6 +6,14 @@ export function createNewsAPI(token, body) {
   return axios.post(`${endpointPrefix}/`, body, withAuthorization(token));
 }
 
+export function updateNewsAPI(token, news_id, body) {
+  return axios.put(`${endpointPrefix}/${news_id}/`, body, withAuthorization(token));
+}
+
+export function deleteNewsAPI(token, news_id) {
+  return axios.delete(`${endpointPrefix}/${news_id}/`, withAuthorization(token));
+}
+
 export function uploadNewsImage(token, images) {
   const formData = new FormData();
   images.forEach(image => {

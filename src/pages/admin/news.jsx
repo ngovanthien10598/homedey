@@ -4,9 +4,10 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllNewsAPI } from 'services/user/news';
 import CreateNewsForm from 'forms/CreateNewsForm/CreateNewsForm';
 import UploadPictures from 'components/UploadPictures/UploadPictures';
-import { uploadNewsImage, createNewsAPI } from 'services/admin/news';
+import { uploadNewsImage, createNewsAPI, updateNewsAPI, deleteNewsAPI } from 'services/admin/news';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
+import EditNewsForm from 'forms/EditNewsForm/EditNewsForm';
 
 const { useForm } = Form;
 
@@ -14,12 +15,14 @@ const AdminNewsPage = props => {
   const [news, setNews] = useState(null);
   const [isLoadingNews, setLoadingNews] = useState(null);
   const [isModalShow, setModalState] = useState(false);
-  const [createForm, editForm] = useForm();
+  const [createForm] = useForm();
+  const [editForm] = useForm();
   const [action, setAction] = useState('');
   const [imageList, setImageList] = useState([]);
   const accessToken = Cookies.get('access');
   const [isLoading, setIsLoading] = useState(false);
   const [image_ids, setImages_ids] = useState(null);
+  const [selectedNews, setSelectedNews] = useState(null);
 
   const tableColumns = [
     { title: '#', render: (text, record, index) => (index + 1) },
@@ -30,10 +33,10 @@ const AdminNewsPage = props => {
         return (
           <>
             <Tooltip title="Chỉnh sửa">
-              <Button type="link" icon={<EditOutlined />} onClick={handleEditClick} />
+              <Button type="link" icon={<EditOutlined />} onClick={() => handleEditClick(record)} />
             </Tooltip>
             <Tooltip title="Xóa">
-              <Popconfirm>
+              <Popconfirm title="Bạn có chắc muốn xóa tin này" onConfirm={() => handleDelete(record.id)}>
                 <Button danger type="link" icon={<DeleteOutlined />} />
               </Popconfirm>
             </Tooltip>
@@ -66,20 +69,22 @@ const AdminNewsPage = props => {
   const handleCreate = async values => {
     setIsLoading(true);
     try {
+      let image_ids_uploaded;
       if (!image_ids) {
         const response = await uploadNewsImage(accessToken, imageList.map(image => image.originFileObj));
-        const image_ids = response.data.image_ids;
-        setImages_ids(image_ids);
+        image_ids_uploaded = response.data.image_ids;
+        setImages_ids(image_ids_uploaded);
       }
       const newsBody = {
         title: values.title,
         content: values.content,
         news_category_id: values.news_category_id,
-        image_ids: image_ids
+        image_ids: image_ids_uploaded
       }
       const createResponse = await createNewsAPI(accessToken, newsBody);
-      const newState = [...news];
-      newState.unshift(createResponse.data.data);
+      const newState = { ...news };
+      newState.results = [...news.results];
+      newState.results.unshift(createResponse.data.data);
       setNews(newState);
       setImages_ids(null);
       setModalState(false);
@@ -89,29 +94,68 @@ const AdminNewsPage = props => {
     setIsLoading(false);
   }
 
-  const handleEditClick = () => {
+  const handleEditClick = news => {
     setModalState(true);
+    setSelectedNews(news);
+    setAction('edit');
+    setImageList(news.images.map(image => {
+      return {
+        ...image,
+        uid: image.id
+      }
+    }))
   }
 
-  const handleEdit = () => {
-
+  const handleEdit = async values => {
+    setIsLoading(true);
+    try {
+      let image_ids_uploaded = [];
+      const old_images_ids = selectedNews.images.map(image => image.id);
+      if (!image_ids) {
+        const new_images = imageList.filter(image => image.originFileObj).map(image => image.originFileObj);
+        if (new_images.length > 0) {
+          const response = await uploadNewsImage(accessToken, new_images);
+          image_ids_uploaded = response.data.image_ids;
+          setImages_ids(image_ids_uploaded);
+        }
+      }
+      const newsBody = {
+        title: values.title,
+        content: values.content,
+        news_category_id: values.news_category_id,
+        image_ids: [...old_images_ids, ...image_ids_uploaded]
+      }
+      const updateResponse = await updateNewsAPI(accessToken, selectedNews.id, newsBody);
+      const updatedNews = updateResponse.data.data;
+      const newState = { ...news };
+      const index = newState.results.findIndex(n => n.id === selectedNews.id);
+      newState.results = [...news.results];
+      newState.results[index] = updatedNews;
+      setNews(newState)
+      setImages_ids(null);
+    } catch (error) {
+      console.log(error);
+    }
+    setIsLoading(false);
+    setModalState(false);
   }
 
-  const handleDeleteClick = () => {
-
-  }
-
-  const handleDelete = () => {
-
+  const handleDelete = async id => {
+    try {
+      await deleteNewsAPI(accessToken, id);
+      const newState = { ...news };
+      const index = newState.results.findIndex(n => n.id === id);
+      newState.results = [...news.results];
+      newState.results.splice(index, 1);
+      setNews(newState);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const handleBeforeUpload = file => {
     setImageList([...imageList, file]);
     return false;
-  }
-
-  const handleRemoveImage = file => {
-
   }
 
   const handleOK = () => {
@@ -120,6 +164,18 @@ const AdminNewsPage = props => {
         handleCreate(values);
       });
     }
+
+    if (action === 'edit') {
+      editForm.validateFields().then(values => {
+        handleEdit(values);
+      })
+    }
+  }
+
+  const onAfterModalClose = () => {
+    editForm.resetFields();
+    createForm.resetFields();
+    setSelectedNews(null);
   }
 
   useEffect(() => {
@@ -140,6 +196,7 @@ const AdminNewsPage = props => {
       <Modal
         destroyOnClose={true}
         onOk={handleOK}
+        afterClose={onAfterModalClose}
         onCancel={() => setModalState(false)}
         confirmLoading={isLoading}
         visible={isModalShow} width="80%">
@@ -150,14 +207,19 @@ const AdminNewsPage = props => {
             <UploadPictures
               onChange={onUploadChange}
               fileList={imageList}
-              beforeUpload={handleBeforeUpload}
-              onRemove={handleRemoveImage} />
+              beforeUpload={handleBeforeUpload} />
           </div>
         }
 
         {
           action === 'edit' &&
-          <CreateNewsForm onFinish={handleEdit} form={editForm} />
+          <div>
+            <EditNewsForm onFinish={handleEdit} news={selectedNews} form={editForm} />
+            <UploadPictures
+              onChange={onUploadChange}
+              fileList={imageList}
+              beforeUpload={handleBeforeUpload} />
+          </div>
         }
       </Modal>
     </div>

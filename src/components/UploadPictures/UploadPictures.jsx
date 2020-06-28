@@ -24,8 +24,9 @@ const UploadPictures = props => {
   }
 
   const handlePreview = async file => {
-    console.log(file);
-    file.preview = await getBase64(file.originFileObj);
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
 
     setPreviewImage(file.url || file.preview);
     setPreviewVisible(true);
@@ -47,8 +48,7 @@ const UploadPictures = props => {
         onPreview={handlePreview}
         onChange={props.onChange}
         disabled={props.disabled}
-        beforeUpload={props.beforeUpload}
-        onRemove={props.onRemove}>
+        beforeUpload={props.beforeUpload}>
         {uploadButton}
       </Upload>
       <Modal
