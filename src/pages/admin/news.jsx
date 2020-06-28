@@ -88,6 +88,7 @@ const AdminNewsPage = props => {
       setNews(newState);
       setImages_ids(null);
       setModalState(false);
+      setImageList(null);
     } catch (error) {
       console.log(error);
     }
