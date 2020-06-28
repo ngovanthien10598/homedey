@@ -27,6 +27,7 @@ const AdminNewsPage = props => {
   const tableColumns = [
     { title: '#', render: (text, record, index) => (index + 1) },
     { title: 'Tiêu đề', dataIndex: 'title', render: (text, record) => <Link to={`/news/${record.slug}`}>{record.title}</Link> },
+    { title: 'Loại', dataIndex: 'news_category.name', render: (text, record) => record.news_category.name },
     { title: 'Ngày đăng', dataIndex: 'created_at', render: (text, record) => new Date(record.created_at).toLocaleDateString('vi-VN') },
     {
       title: 'Hành động', key: 'action', render: (_, record) => {
