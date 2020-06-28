@@ -1,3 +1,6 @@
+@import '~@material/react-linear-progress/dist/linear-progress.css';
+@import '~react-quill/dist/quill.snow.css';
+
 // Settings
 @import 'variable';
 @import 'mixins';
@@ -16,6 +19,7 @@
 @import './layouts/project';
 @import './layouts/project-details';
 @import './layouts/real-estate';
+@import './layouts/real-estate-details';
 
 // Shared
-@import './layouts/shared/real-estate-details';
+// @import './layouts/shared/real-estate-details';

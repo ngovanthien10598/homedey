@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { HashRouter as Router } from 'react-router-dom';
 import {
   Switch,
-  Route
+  Route,
 } from 'react-router-dom';
 import HomePage from 'pages';
 import RealEstatePage from 'pages/real-estate';
@@ -19,7 +19,8 @@ import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 import Cookies from 'js-cookie';
 import { setAccessToken, getProfileAction } from 'store/actions/user.action';
 import { useDispatch, useSelector } from 'react-redux';
-
+import RealEstateDetailsPage from 'pages/real-estate/real-estate-details';
+import NewsDetailsPage from 'pages/news/news-details';
 
 
 const App = props => {
@@ -38,10 +39,12 @@ const App = props => {
     <Router>
       <Switch>
         <Route path="/" exact component={HomePage} />
-        <Route path="/real-estate" component={RealEstatePage} />
+        <Route path="/real-estate" exact component={RealEstatePage} />
+        <Route path="/real-estate/:slug" component={RealEstateDetailsPage} />
         <Route path="/project" exact component={ProjectsPage} />
         <Route path="/project/:slug" component={ProjectDetailsPage} />
-        <Route path="/news" component={NewsPage} />
+        <Route path="/news" exact component={NewsPage} />
+        <Route path="/news/:slug" component={NewsDetailsPage} />
         <Route path="/about" component={AboutPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />

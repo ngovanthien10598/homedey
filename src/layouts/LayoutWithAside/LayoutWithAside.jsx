@@ -10,23 +10,24 @@ const LayoutWithAside = props => {
       <div className="layout-aside_main">{props.children}</div>
       <aside className="layout-aside_aside">
         <h3>Nổi bật</h3>
-        <Divider style={{marginTop: 0}} />
-        <div>
+        <Divider style={{ marginTop: 0 }} />
+        <ul>
           {
             Array(3).fill().map((_, index) => {
-              return <RealEstate thumbnail key={index} />
+              return (
+                <RealEstate thumbnail key={index} />)
             })
           }
-        </div>
+        </ul>
         <h3>Gần đây</h3>
-        <Divider style={{marginTop: 0}}/>
-        <div>
+        <Divider style={{ marginTop: 0 }} />
+        <ul>
           {
             Array(3).fill().map((_, index) => {
               return <RealEstate thumbnail key={index} />
             })
           }
-        </div>
+        </ul>
       </aside>
     </div>
   )

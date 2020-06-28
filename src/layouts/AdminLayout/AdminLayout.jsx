@@ -10,6 +10,7 @@ import withAdminRote from 'HOCs/withAdminRoute';
 import Header from 'components/Header/Header';
 
 import './AdminLayout.scss';
+import AdminNewsCategoryPage from 'pages/admin/news-category';
 
 const { Sider, Content } = Layout;
 
@@ -20,6 +21,7 @@ const AdminLayout = props => {
     { path: `${path}/`, name: 'Tổng quan' },
     { path: `${path}/real-estate`, name: 'Quản lý tin bất động sản' },
     { path: `${path}/project`, name: 'Quản lý dự án' },
+    { path: `${path}/news-category`, name: 'Quản lý loại tin tức' },
     { path: `${path}/news`, name: 'Quản lý tin tức' },
     { path: `${path}/user`, name: 'Quản lý người dùng' },
   ]
@@ -45,6 +47,7 @@ const AdminLayout = props => {
             <Switch>
               <Route path={`${path}/`} exact component={AdminHomePage} />
               <Route path={`${path}/real-estate`} component={AdminRealestatePage} />
+              <Route path={`${path}/news-category`} component={AdminNewsCategoryPage} />
               <Route path={`${path}/news`} component={AdminNewsPage} />
               <Route path={`${path}/project`} component={AdminProjectsPage} />
               <Route path={`${path}/user`} component={AdminUserPage} />

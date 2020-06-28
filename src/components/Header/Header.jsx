@@ -7,6 +7,7 @@ import { logoutAction } from 'store/actions/user.action';
 import { useEffect } from 'react';
 import { getAllRealEstateCategoriesAPI } from 'services/user/real-estate-category';
 import SubMenu from 'antd/lib/menu/SubMenu';
+import LinearProgress from '@material/react-linear-progress';
 
 const { Header } = Layout;
 
@@ -23,6 +24,7 @@ const PageHeader = (props) => {
   const dispatch = useDispatch();
   const [categories, setCategories] = useState(null);
   const userState = useSelector(state => state.userState);
+  const loadingState = useSelector(state => state.loadingState);
   const { user } = userState;
   const userLocal = localStorage.getItem('user');
   const href = window.location.href;
@@ -41,7 +43,14 @@ const PageHeader = (props) => {
   }
 
   return (
-    <Header  className={`header${props.isDashboard ? ' header--dashboard' : ''}`}>
+    <Header className={`header${props.isDashboard ? ' header--dashboard' : ''}`}>
+      <div className="header_loading">
+        {
+          loadingState.loading &&
+          <LinearProgress className="header_loading_linear" indeterminate={true} />
+        }
+      </div>
+
       <Link className="header_brand" to="/">
         <img src={`${process.env.PUBLIC_URL}/images/logo.svg`} alt="Homedey" width="32" />
       </Link>

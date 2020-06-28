@@ -1,16 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import 'antd/dist/antd.css';
-import 'styles/style.scss';
 import * as serviceWorker from './serviceWorker';
 import store from 'store/store';
 import { Provider } from 'react-redux';
 import axios from 'axios';
 import { notification } from 'antd';
-import { logoutAction, setAccessToken } from 'store/actions/user.action';
+import { setAccessToken } from 'store/actions/user.action';
 import apiPrefix from 'services/apiPrefix';
 import Cookies from 'js-cookie';
+
+import 'antd/dist/antd.css';
+import 'styles/style.scss';
 
 // Setup axios interceptors
 function setupAxios(store) {

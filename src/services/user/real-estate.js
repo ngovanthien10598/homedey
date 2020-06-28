@@ -1,23 +1,26 @@
 import axios from 'axios';
 import apiPrefix, { withAuthorization } from '../apiPrefix';
+const endpointPrefix = `${apiPrefix}/user/real-estate`;
 
-export function getAllRealEstate() {
-  return axios.get(`${apiPrefix}/user/real-estate/`);
+export function getAllRealEstateAPI() {
+  return axios.get(`${endpointPrefix}/`);
 }
 
 export function createRealEstate(token, body) {
-  return axios.post(`${apiPrefix}/user/real-estate/listings/`, body, withAuthorization(token))
+  return axios.post(`${endpointPrefix}/listings/`, body, withAuthorization(token))
 }
 
-
+export function getRealEstateDetailsAPI(slug) {
+  return axios.get(`${endpointPrefix}/${slug}/`);
+}
 
 export function uploadImages(images) {
   const formData = new FormData();
   images.forEach(image => {
     formData.append('images[]', image);
   })
-  console.log(formData)
-  return axios.post(`${apiPrefix}/user/real-estate/upload-image/`, formData, {
+  
+  return axios.post(`${endpointPrefix}/upload-image/`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

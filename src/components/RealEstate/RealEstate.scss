@@ -1,31 +1,67 @@
 .real-estate {
+  display: flex;
 
-  &_price {
-    font-weight: 700;
-    margin-bottom: 5px;
-  }
-
-  &_link:hover {
-    color: #1890ff !important;
+  &:not(:last-child) {
+    margin-bottom: 30px;
   }
 
   &--thumbnail {
-    max-width: 100%;
-    margin-bottom: 20px !important;
-  
-    .ant-card-body {
-      padding: 10px 0 0;
+
+    .real-estate__image {
+      flex-basis: 120px;
+      margin-right: 10px;
     }
 
-    .ant-card-meta-detail,
-    .ant-card-meta-title {
-      overflow: initial;
+    .real-estate__heading {
+      font-size: 14px;
     }
 
-    h3 {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .real-estate__summary,
+    .real-estate__columns,
+    .real-estate__address,
+    .real-estate__date {
+      display: none;
     }
+  }
+
+  &__image {
+    flex-basis: 250px;
+    flex-shrink: 0;
+    margin-right: 30px;
+  }
+
+  &__content {
+    svg {
+      margin-right: 5px;
+    }
+  }
+
+  &__heading {
+    a {
+      &:hover {
+        color: #1890ff !important;
+      }
+    }
+  }
+
+  &__columns {
+    display: flex;
+    margin-bottom: 10px;
+
+    span {
+      font-weight: 700;
+      &:not(:last-child) {
+        margin-right: 60px;
+      }
+    }
+  }
+
+  &__address {
+    margin-bottom: 10px;
+  }
+
+  &__summary,
+  &__date {
+    color: rgba(#000, 0.6);
   }
 }

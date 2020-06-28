@@ -3,17 +3,33 @@ import { Link } from 'react-router-dom';
 
 import './News.scss';
 import { CalendarOutlined } from '@ant-design/icons';
+import { truncateText } from 'utils/string';
+import { Tag } from 'antd';
 
 const News = props => {
+  const { news } = props;
+  const { title, content, created_at, images, news_category, slug } = news;
+
+  const div = document.createElement("div");
+  div.innerHTML = content;
+  const contentStr = truncateText(div.innerText, 100);
+
   return (
     <div className="news">
-      <Link to="/news/slug" className="news_thumbnail">
-        <img src="//via.placeholder.com/800x600" alt="" />
+      <Link to={`/news/${slug}`} className="news_thumbnail">
+        <img src={images[0]?.url || '//via.placeholder.com/800x600'} alt={images[0]?.url || '//via.placeholder.com/800x600'} />
       </Link>
       <div className="news-content">
-        <h3 className="news_title">Lorem ipsum dolor sit amet consectetur adipisicing elit.</h3>
-        <p className="news_summary">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus magnam, debitis saepe accusamus ex aperiam id autem dolore hic voluptatibus necessitatibus facere pariatur exercitationem praesentium ducimus, provident possimus reprehenderit doloremque?</p>
-        <p className="news_date"><CalendarOutlined /> {new Date().toLocaleDateString("vi-VN")}</p>
+        <h3 className="news_title"><Link to={`/news/${slug}`}>{title}</Link></h3>
+        <p className="news_summary">{contentStr}</p>
+
+        <p>
+          <Tag>
+            <Link to={`/news?category=${news_category.slug}`}>{news_category.name}</Link>
+          </Tag>
+        </p>
+
+        <p className="news_date"><CalendarOutlined /> {new Date(created_at).toLocaleDateString("vi-VN")}</p>
       </div>
     </div>
   )

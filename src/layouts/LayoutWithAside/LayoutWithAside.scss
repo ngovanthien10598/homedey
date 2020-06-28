@@ -6,13 +6,16 @@
   }
 
   &_aside {
-    flex-basis: 250px;
-    max-width: 250px;
+    flex-basis:350px;
     flex-shrink: 0;
     margin-left: 100px;
 
     @media screen and (max-width: 1200px) {
       display: none;
+    }
+
+    h3 ~ h3 {
+      margin-top: 30px;
     }
   }
 }
