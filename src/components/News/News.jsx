@@ -1,10 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-import './News.scss';
 import { CalendarOutlined } from '@ant-design/icons';
 import { truncateText } from 'utils/string';
 import { Tag } from 'antd';
+import './News.scss';
 
 const News = props => {
   const { news } = props;

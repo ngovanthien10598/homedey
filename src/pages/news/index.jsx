@@ -8,6 +8,7 @@ import { getAllNewsCategoriesAPI } from 'services/user/news-category';
 import { useLocation, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setLoading } from 'store/actions/loading.action';
+import { Helmet } from 'react-helmet';
 
 const NewsPage = props => {
 
@@ -65,6 +66,10 @@ const NewsPage = props => {
 
   return (
     <MainLayout>
+      <Helmet>
+        <title>Tin tức | Homedey</title>
+        <meta name="description" content="Đọc tin tức tại homedey"/>
+      </Helmet>
       <LayoutWithAside>
         <div className="page-news">
           <h2>Tin tức</h2>
