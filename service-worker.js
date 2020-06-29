@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/homedey/precache-manifest.0146cb53f3ef25d48573c1dc5b8d15a6.js"
+  "/homedey/precache-manifest.cc455bfc27dad443f99dada2a3a58602.js"
 );
 
 self.addEventListener('message', (event) => {
