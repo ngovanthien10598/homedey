@@ -49,7 +49,7 @@ const UploadPictures = props => {
         onChange={props.onChange}
         disabled={props.disabled}
         beforeUpload={props.beforeUpload}>
-        {uploadButton}
+        {props.length ? (props.fileList?.length < props.length ? uploadButton : null) : uploadButton}
       </Upload>
       <Modal
         visible={previewVisible}

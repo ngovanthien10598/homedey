@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Row, Col, Select, Button } from 'antd';
 import { getAllRealEstateCategoriesAPI } from 'services/user/real-estate-category';
-import { getAllCities, getDistrictsByCity, getWardsByDistrict, getStreetsByDistrict } from 'services/user/address';
-import { getProjectsByDistrict } from 'services/user/project';
+import { getAllCitiesAPI, getDistrictsByCityAPI, getWardsByDistrictAPI, getStreetsByDistrictAPI } from 'services/user/address';
+import { getProjectsByDistrictAPI } from 'services/user/project';
 import { uploadImages, createRealEstate } from 'services/user/real-estate';
 import MapMarker from 'components/MapMarker/MapMarker';
 import UploadButton from 'components/UploadButton/UploadButton';
@@ -58,7 +58,7 @@ const CreateRealEstateForm = props => {
   const getCities = async () => {
     setLoadingCities(true);
     try {
-      const getAllCitiesReponse = await getAllCities()
+      const getAllCitiesReponse = await getAllCitiesAPI()
       setCities(getAllCitiesReponse.data);
     } catch (error) {
       console.log({ error });
@@ -73,7 +73,7 @@ const CreateRealEstateForm = props => {
     setDistricts(null);
     setWards(null);
     try {
-      const getDistrictsResponse = await getDistrictsByCity(cityId);
+      const getDistrictsResponse = await getDistrictsByCityAPI(cityId);
       setDistricts(getDistrictsResponse.data);
     } catch (error) {
       console.log({ error });
@@ -90,9 +90,9 @@ const CreateRealEstateForm = props => {
     setProjects(null);
     try {
       const [getWardsResponse, getStreetsResponse, getProjectsResponse] = await Promise.all([
-        getWardsByDistrict(districtId),
-        getStreetsByDistrict(districtId),
-        getProjectsByDistrict(districtId)
+        getWardsByDistrictAPI(districtId),
+        getStreetsByDistrictAPI(districtId),
+        getProjectsByDistrictAPI(districtId)
       ]);
       setWards(getWardsResponse.data);
       setStreets(getStreetsResponse.data);
@@ -415,7 +415,7 @@ const CreateRealEstateForm = props => {
             </Col>
           </Row>
           <Form.Item label="Dự án" name="project_id" initialValue={null}>
-            {/* <Select loading={isLoadingProjects} disabled={isLoadingProjects && true}>
+            <Select loading={isLoadingProjects} disabled={isLoadingProjects && true}>
               <Option value="Chọn dự án" disabled>Chọn dự án</Option>
               {
                 projects &&
@@ -425,7 +425,7 @@ const CreateRealEstateForm = props => {
                   )
                 })
               }
-            </Select> */}
+            </Select>
           </Form.Item>
         </Col>
       </Row>

@@ -8,7 +8,6 @@ const { Option } = Select;
 const EditNewsForm = props => {
 
   const news = props.news;
-  console.log(news);
 
   const [content, setContent] = useState('');
   const [newsCategories, setNewsCategories] = useState(null);

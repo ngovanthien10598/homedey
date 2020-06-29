@@ -23,3 +23,12 @@ export function truncateText(text, maxLength = 70, delimiter = "...") {
   }
   return result;
 }
+
+export function getShortAddressString(addressObj) {
+  const { ward } = addressObj;
+  const { district } = ward;
+  const { city } = district;
+  const districtStr = district.prefix + " " + district.name;
+  const cityStr = city.prefix + " " + city.name;
+  return districtStr + ", " + cityStr;
+}
