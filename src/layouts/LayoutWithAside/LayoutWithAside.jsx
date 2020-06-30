@@ -5,6 +5,7 @@ import { Divider } from 'antd';
 import RealEstate from 'components/RealEstate/RealEstate';
 
 const LayoutWithAside = props => {
+  console.log(props);
   return (
     <div className="layout-aside">
       <div className="layout-aside_main">{props.children}</div>
@@ -13,9 +14,9 @@ const LayoutWithAside = props => {
         <Divider style={{ marginTop: 0 }} />
         <ul>
           {
-            Array(3).fill().map((_, index) => {
+            props.featured?.map((realEstate, index) => {
               return (
-                <RealEstate thumbnail key={index} />)
+                <RealEstate thumbnail realEstate={realEstate} key={realEstate.id} />)
             })
           }
         </ul>
@@ -23,8 +24,8 @@ const LayoutWithAside = props => {
         <Divider style={{ marginTop: 0 }} />
         <ul>
           {
-            Array(3).fill().map((_, index) => {
-              return <RealEstate thumbnail key={index} />
+            props.latest?.map((realEstate, index) => {
+              return <RealEstate thumbnail realEstate={realEstate} key={realEstate.id} />
             })
           }
         </ul>

@@ -21,3 +21,7 @@ export function createRealEstateAPI(token, body) {
 export function getRealEstateDetailsAPI(slug) {
   return axios.get(`${endpointPrefix}/${slug}/`);
 }
+
+export function getFeaturedRealEstatesAPI(limit = 3) {
+  return axios.get(`${endpointPrefix}/featured/?limit=${limit}`);
+}

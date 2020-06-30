@@ -53,11 +53,28 @@ const RealEstateDetailsPage = () => {
               </Carousel>
 
               <br />
+              <h3><strong>Thông tin chung</strong></h3>
+
+              <div><strong>Diện tích</strong></div>
+              <p>{realEstate.area} m<sup>2</sup></p>
+
+              <div><strong>Tổng diện tích</strong></div>
+              <p>{realEstate.lot_size} m<sup>2</sup></p>
+
+              <div><strong>Phòng ngủ</strong></div>
+              <p>{realEstate.bedroom}</p>
+
+              <div><strong>Phòng tắm</strong></div>
+              <p>{realEstate.bathroom}</p>
+
+              <div><strong>Thuộc dự án</strong></div>
+              <p>{realEstate.project?.name || "Không"}</p>
+
               <h3><strong>Thông tin chi tiết</strong></h3>
               <div dangerouslySetInnerHTML={{ __html: realEstate.detail }}></div>
 
               <h3><strong>Bản đồ</strong></h3>
-              <LLMap style={{height: 400}} zoom={10} center={
+              <LLMap style={{ height: 400 }} zoom={10} center={
                 { lat: realEstate.address.latitude, lng: realEstate.address.longitude }
               }>
                 <Marker position={

@@ -3,7 +3,7 @@ import MainLayout from 'layouts/MainLayout/MainLayout';
 import LayoutWithAside from 'layouts/LayoutWithAside/LayoutWithAside';
 import { Divider, Empty } from 'antd';
 import RealEstate from 'components/RealEstate/RealEstate';
-import { getAllRealEstateAPI, getRealEstateForSaleAPI, getRealEstateForRentAPI } from 'services/user/real-estate';
+import { getAllRealEstateAPI, getRealEstateForSaleAPI, getRealEstateForRentAPI, getFeaturedRealEstatesAPI } from 'services/user/real-estate';
 import { setLoading } from 'store/actions/loading.action';
 import { useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { useLocation } from 'react-router-dom';
 const RealEstatePage = props => {
 
   const [realEstate, setRealEstate] = useState(null);
+  const [featuredRealEstates, setFeaturedRealEstates] = useState(null);
   const dispatch = useDispatch();
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -65,9 +66,21 @@ const RealEstatePage = props => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
+  useEffect(() => {
+    const getFeatured = async () => {
+      try {
+        const response = await getFeaturedRealEstatesAPI();
+        setFeaturedRealEstates(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getFeatured();
+  }, [])
+
   return (
     <MainLayout>
-      <LayoutWithAside>
+      <LayoutWithAside featured={featuredRealEstates} latest={realEstate?.results.slice(0, 3)}>
         <h2>Nhà đất {for_rent === 'true' ? 'cho thuê' : 'bán'}</h2>
         <Divider />
         {
