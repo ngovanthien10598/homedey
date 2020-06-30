@@ -6,7 +6,7 @@ import store from 'store/store';
 import { Provider } from 'react-redux';
 import axios from 'axios';
 import { notification } from 'antd';
-import { setAccessToken } from 'store/actions/user.action';
+import { setAccessToken, logoutAction } from 'store/actions/user.action';
 import apiPrefix from 'services/apiPrefix';
 import Cookies from 'js-cookie';
 
@@ -29,7 +29,14 @@ function setupAxios(store) {
     let description = "";
 
     if (error.response) {
-      if (error.response.status === 401) {
+      const origionalRequest = error.config;
+
+      if (error.response.status === 401 && origionalRequest.url === `${apiPrefix}/auth/refresh-token/`) {
+        store.dispatch(logoutAction());
+      }
+
+      if (error.response.status === 401 && !origionalRequest._retry) {
+        origionalRequest._retry = true;
         const refreshToken = Cookies.get('refresh');
         if (refreshToken) {
           return axios.post(`${apiPrefix}/auth/refresh-token/`, {

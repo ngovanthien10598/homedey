@@ -14,10 +14,10 @@ const ProjectTab = props => {
         return (
           <>
             <Tooltip title="Chỉnh sửa">
-              <Button type="link" icon={<EditOutlined />} />
+              <Button onClick={() => props.onEditClick(record)} type="link" icon={<EditOutlined />} />
             </Tooltip>
             <Tooltip title="Xóa">
-              <Popconfirm title="Bạn có chắc muốn xóa loại này không?">
+              <Popconfirm title="Bạn có chắc muốn xóa dự án này không?" onConfirm={() => props.onDeleteClick(record.id)}>
                 <Button danger type="link" icon={<DeleteOutlined />} />
               </Popconfirm>
             </Tooltip>

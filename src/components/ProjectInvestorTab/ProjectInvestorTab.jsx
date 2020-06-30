@@ -1,12 +1,14 @@
 import React from 'react';
 import { Table, Tooltip, Button, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { getShortAddressString } from 'utils/string';
 
 const ProjectInvestorTab = props => {
   const investors = props.investors;
   const tableColumns = [
     { title: '#', key: '#', render: (text, record, index) => (index + 1) },
     { title: 'Tên', dataIndex: 'name' },
+    { title: 'Địa chỉ', key: 'address', render: (text, record) => getShortAddressString(record.address)},
     {
       title: 'Hành động', key: 'action', render: (text, record) => {
         return (

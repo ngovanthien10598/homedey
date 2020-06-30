@@ -5,6 +5,7 @@ import { getAllProjectsAPI } from 'services/user/project';
 import { getAllInvestorsAPI } from 'services/user/investor';
 import { createProjectCategoryAPI, updateProjectCategoryAPI, deleteProjectCategoryAPI } from 'services/admin/project-category';
 import { createInvestorAPI, updateInvestorAPI, deleteInvestorAPI, updateInvestorAvatarAPI } from 'services/admin/investor';
+import { createProjectAPI, updateProjectAPI, deleteProjectAPI, uploadProjectImagesAPI } from "services/admin/project";
 import ProjectCategoryTab from 'components/ProjectCategoryTab/ProjectCategoryTab';
 import ProjectInvestorTab from 'components/ProjectInvestorTab/ProjectInvestorTab';
 import ProjectTab from 'components/ProjectTab/ProjectTab';
@@ -13,6 +14,7 @@ import ProjectCategoryForm from 'forms/ProjectCategoryForm/ProjectCategoryForm';
 import Cookies from 'js-cookie';
 import InvestorForm from 'forms/InvestorForm/InvestorForm';
 import UploadPictures from 'components/UploadPictures/UploadPictures';
+import ProjectForm from 'forms/ProjectForm/ProjectForm';
 
 const { useForm } = Form;
 
@@ -30,7 +32,6 @@ const AdminProjectsPage = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalShow, setIsModalShow] = useState(false);
 
-  const [object, setObject] = useState(null);
   const [action, setAction] = useState(null);
 
   const [projectCategoryForm] = useForm();
@@ -40,6 +41,7 @@ const AdminProjectsPage = props => {
   const [imageList, setImageList] = useState([]);
 
   const accessToken = Cookies.get('access');
+  const [imageIds, setImageIds] = useState(null);
 
 
   async function getAllProjectCategories() {
@@ -79,19 +81,16 @@ const AdminProjectsPage = props => {
     setIsModalShow(true);
     switch (tab) {
       case 1:
-        setObject('category');
         setAction('create');
         break;
       case 2:
-        setObject('investor');
         setAction('create');
         break;
       case 3:
-        setObject('project');
         setAction('create');
         break;
       default:
-        setObject(null);
+        setAction(null);
     }
   }
 
@@ -152,7 +151,7 @@ const AdminProjectsPage = props => {
       console.log(error);
       setIsLoading(false);
     }
-    
+
   }
 
   const handleUpdateInvestor = async values => {
@@ -180,7 +179,7 @@ const AdminProjectsPage = props => {
       console.log(error);
       setIsLoading(false);
     }
-    
+
   }
 
   const handleDeleteInvestor = async id => {
@@ -194,34 +193,144 @@ const AdminProjectsPage = props => {
     }
   }
 
-  const handleCreateProject = values => {
-    console.log(values);
+  const handleCreateProject = async values => {
+    setIsLoading(true);
+    try {
+      let image_ids;
+      if (!imageIds) {
+        const originFileList = imageList.map(image => image.originFileObj);
+        const upload_response = await uploadProjectImagesAPI(accessToken, originFileList);
+        image_ids = upload_response.data.image_ids;
+        setImageIds(image_ids);
+      }
+
+      const {
+        name,
+        price,
+        area,
+        detail,
+        project_category_id,
+        project_investor_id,
+        ward_id,
+        street_id,
+        position: {
+          lat,
+          lng
+        }
+      } = values;
+      const body = {
+        name,
+        price,
+        area,
+        detail,
+        project_category_id,
+        project_investor_id,
+        ward_id,
+        street_id,
+        latitude: lat,
+        longitude: lng,
+        image_ids
+      };
+      await createProjectAPI(accessToken, body);
+
+      getAllProjects();
+      setIsModalShow(false);
+      setImageList(null);
+
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   }
 
-  const handleUpdateProject = values => {
+  const handleUpdateProject = async values => {
+    setIsLoading(true);
+    try {
+      let image_ids;
+      const old_image_ids = imageList.filter(image => image.id).map(image => image.id);
+      const originFileList = imageList.filter(image => image.originFileObj).map(image => image.originFileObj);
 
+      if (originFileList.length > 0) {
+        if (!imageIds) {
+          const upload_response = await uploadProjectImagesAPI(accessToken, originFileList);
+          image_ids = upload_response.data.image_ids;
+          setImageIds(image_ids);
+        }
+      }
+
+      const {
+        name,
+        price,
+        area,
+        detail,
+        project_category_id,
+        project_investor_id,
+        ward_id,
+        street_id,
+        position: {
+          lat,
+          lng
+        }
+      } = values;
+      const body = {
+        name,
+        price,
+        area,
+        detail,
+        project_category_id,
+        project_investor_id,
+        ward_id,
+        street_id,
+        latitude: lat,
+        longitude: lng,
+        image_ids: [...old_image_ids, ...image_ids]
+      };
+      await updateProjectAPI(accessToken, selectedProject.id, body);
+
+      getAllProjects();
+      setIsModalShow(false);
+      setImageList(null);
+
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   }
 
-  const handleDeleteProject = id => {
-
+  const handleDeleteProject = async id => {
+    setIsLoading(true);
+    try {
+      await deleteProjectAPI(accessToken, id);
+      getAllProjects();
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
   }
 
   const handleEditProjectCategoryClick = category => {
     setSelectedCategory(category);
     setAction('update');
-    setObject('category');
     setIsModalShow(true);
   }
 
   const handleEditInvestorClick = investor => {
     setSelectedInvestor(investor);
     setAction('update');
-    setObject('investor');
     setIsModalShow(true);
   }
 
   const handleEditProjectClick = project => {
-
+    setSelectedProject(project);
+    setAction('update');
+    setIsModalShow(true);
+    console.log(project.images);
+    setImageList(project.images?.map(image => {
+      return {
+        ...image,
+        uid: image.id
+      }
+    }));
   }
 
 
@@ -332,7 +441,11 @@ const AdminProjectsPage = props => {
             onDeleteClick={handleDeleteInvestor} />
         </Tabs.TabPane>
         <Tabs.TabPane tab="Dự án" key="3">
-          <ProjectTab loading={isLoading} projects={projects} />
+          <ProjectTab
+            loading={isLoading}
+            projects={projects}
+            onEditClick={handleEditProjectClick}
+            onDeleteClick={handleDeleteProject} />
         </Tabs.TabPane>
       </Tabs>
       <Modal
@@ -356,6 +469,16 @@ const AdminProjectsPage = props => {
               onChange={handleImageChange}
               fileList={imageList}
               length={1} />
+          </>
+        }
+        {
+          tab === 3 &&
+          <>
+            <ProjectForm form={projectForm} project={selectedProject} />
+            <UploadPictures
+              beforeUpload={handleBeforeUpload}
+              onChange={handleImageChange}
+              fileList={imageList} />
           </>
         }
 
