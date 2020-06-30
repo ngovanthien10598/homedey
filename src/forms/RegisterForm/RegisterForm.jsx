@@ -19,7 +19,7 @@ const RegisterForm = props => {
         description: 'Vui lòng xác nhận tài khoản của bạn bằng email được gửi để đăng nhập.',
         duration: 2000,
         onClose: () => {
-          history.replace('/dang-nhap');
+          history.replace('/login');
         }
       })
       console.log(registerRes);
@@ -84,7 +84,7 @@ const RegisterForm = props => {
         <Form.Item >
           <Button type="primary" loading={isLoading} htmlType="submit" block>Đăng ký</Button>
         </Form.Item>
-        <p className="text-center">Đã có tài khoản? <Link to="/dang-nhap">Đăng nhập</Link></p>
+        <p className="text-center">Đã có tài khoản? <Link to="/login">Đăng nhập</Link></p>
       </Form>
     </AuthForm>
   )

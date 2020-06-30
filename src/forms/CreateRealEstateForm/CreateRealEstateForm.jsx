@@ -3,7 +3,8 @@ import { Form, Input, Row, Col, Select, Button } from 'antd';
 import { getAllRealEstateCategoriesAPI } from 'services/user/real-estate-category';
 import { getAllCitiesAPI, getDistrictsByCityAPI, getWardsByDistrictAPI, getStreetsByDistrictAPI } from 'services/user/address';
 import { getProjectsByDistrictAPI } from 'services/user/project';
-import { uploadImages, createRealEstate } from 'services/user/real-estate';
+import { createRealEstateAPI } from 'services/user/real-estate';
+import { uploadRealEstateImagesAPI } from 'services/user/listing';
 import MapMarker from 'components/MapMarker/MapMarker';
 import UploadButton from 'components/UploadButton/UploadButton';
 import { useRef } from 'react';
@@ -126,7 +127,7 @@ const CreateRealEstateForm = props => {
     let image_ids = [];
     setIsLoading(true);
     try {
-      const uploadResponse = await uploadImages(fileList);
+      const uploadResponse = await uploadRealEstateImagesAPI(fileList);
       image_ids = uploadResponse.data.image_ids;
     } catch (error) {
       console.log({ error });
@@ -165,7 +166,7 @@ const CreateRealEstateForm = props => {
     }
 
     try {
-      await createRealEstate(userState.accessToken, body);
+      await createRealEstateAPI(userState.accessToken, body);
     } catch (error) {
       console.log({ error });
     }

@@ -1,9 +1,10 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 // import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 
 const AdminHomePage = props => {
   return (
-    <div>Tổng quan</div>
+    <Redirect to="/admin/real-estate" />
   )
 }
 

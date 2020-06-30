@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import MainLayout from 'layouts/MainLayout/MainLayout';
 import LayoutWithAside from 'layouts/LayoutWithAside/LayoutWithAside';
-import { Divider } from 'antd';
+import { Divider, Empty } from 'antd';
 import RealEstate from 'components/RealEstate/RealEstate';
-import { getAllRealEstateAPI } from 'services/user/real-estate';
+import { getAllRealEstateAPI, getRealEstateForSaleAPI, getRealEstateForRentAPI } from 'services/user/real-estate';
 import { setLoading } from 'store/actions/loading.action';
 import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 const RealEstatePage = props => {
 
   const [realEstate, setRealEstate] = useState(null);
   const dispatch = useDispatch();
+  const { search } = useLocation();
+  const searchParams = new URLSearchParams(search);
+  const for_rent = searchParams.get('for_rent');
 
   const getAllRealEstate = async () => {
     dispatch(setLoading(true));
@@ -23,26 +27,59 @@ const RealEstatePage = props => {
     dispatch(setLoading(false));
   }
 
+  const getRealEstateForSale = async (query) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await getRealEstateForSaleAPI(query);
+      setRealEstate(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoading(false));
+  }
+
+  const getRealEstateForRent = async (query) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await getRealEstateForRentAPI(query);
+      setRealEstate(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+    dispatch(setLoading(false));
+  }
+
   useEffect(() => {
-    getAllRealEstate();
-  }, []);
+    if (for_rent === 'true') {
+      const newSearchParams = new URLSearchParams(search);
+      newSearchParams.delete('for_rent');
+      getRealEstateForRent(newSearchParams.toString());
+
+    } else if (for_rent === 'false') {
+      const newSearchParams = new URLSearchParams(search);
+      newSearchParams.delete('for_rent');
+      getRealEstateForSale(newSearchParams.toString());
+    } else {
+      getAllRealEstate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
 
   return (
     <MainLayout>
       <LayoutWithAside>
-        <h2>Nhà đất bán</h2>
+        <h2>Nhà đất {for_rent === 'true' ? 'cho thuê' : 'bán'}</h2>
         <Divider />
         {
           realEstate &&
           <ul className="real-estate-page_grid">
             {
-
               realEstate.results.length > 0 ?
                 realEstate.results.map(item => {
                   return <RealEstate realEstate={item} key={item.id} />
                 })
                 :
-                <li>No posts found.</li>
+                <Empty />
             }
           </ul>
         }

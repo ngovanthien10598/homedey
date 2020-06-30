@@ -14,9 +14,9 @@ export function approveRealEstateAPI(token, realEstateId) {
   const body = {
     is_active: "True"
   }
-  return axios.patch(`${endpointPrefix}/${realEstateId}/`, body, withAuthorization(token));
+  return axios.get(`${endpointPrefix}/${realEstateId}/accepted/`, body, withAuthorization(token));
 }
 
 export function rejectRealEstateAPI(token, realEstateId) {
-  return axios.delete(`${endpointPrefix}/${realEstateId}/`, withAuthorization(token));
+  return axios.get(`${endpointPrefix}/${realEstateId}/rejected/`, withAuthorization(token));
 }

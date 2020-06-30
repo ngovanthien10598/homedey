@@ -18,7 +18,6 @@ const AdminLayout = props => {
   const { path } = useRouteMatch();
   const { pathname } = useLocation();
   const adminRoutes = [
-    { path: `${path}/`, name: 'Tổng quan' },
     { path: `${path}/real-estate`, name: 'Quản lý tin bất động sản' },
     { path: `${path}/project`, name: 'Quản lý dự án' },
     { path: `${path}/news-category`, name: 'Quản lý loại tin tức' },

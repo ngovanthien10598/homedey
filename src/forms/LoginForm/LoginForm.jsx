@@ -68,7 +68,7 @@ const LoginForm = props => {
           <Input.Password id="password" prefix={<KeyOutlined />} />
         </Form.Item>
 
-        <p><Link to="/quen-mat-khau">Quên mật khẩu</Link></p>
+        <p><Link to="/forgot-password">Quên mật khẩu</Link></p>
 
         <Form.Item >
           <Button
@@ -77,7 +77,7 @@ const LoginForm = props => {
             loading={isLoading}
             block>Đăng nhập</Button>
         </Form.Item>
-        <p className="text-center">Chưa có tài khoản? <Link to="/dang-ky">Đăng ký</Link></p>
+        <p className="text-center">Chưa có tài khoản? <Link to="/register">Đăng ký</Link></p>
       </Form>
     </AuthForm>
   )

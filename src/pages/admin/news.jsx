@@ -125,7 +125,7 @@ const AdminNewsPage = props => {
         title: values.title,
         content: values.content,
         news_category_id: values.news_category_id,
-        image_ids: [...old_images_ids, ...image_ids_uploaded]
+        image_ids: image_ids_uploaded ? [...old_images_ids, ...image_ids_uploaded] : [...old_images_ids]
       }
       const updateResponse = await updateNewsAPI(accessToken, selectedNews.id, newsBody);
       const updatedNews = updateResponse.data.data;

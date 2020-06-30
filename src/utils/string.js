@@ -32,3 +32,24 @@ export function getShortAddressString(addressObj) {
   const cityStr = city.prefix + " " + city.name;
   return districtStr + ", " + cityStr;
 }
+
+export function getAddressString(addressObj) {
+
+  if (!addressObj) return '';
+
+  const {
+    ward,
+    ward: {
+      district,
+      district: {
+        city
+      }
+    },
+    street
+  } = addressObj;
+  const streetStr = street.prefix + " " + street.name;
+  const wardStr = ward.prefix + " " + ward.name;
+  const districtStr = district.prefix + " " + district.name;
+  const cityStr = city.prefix + " " + city.name;
+  return [streetStr, wardStr, districtStr, cityStr].join(", ");
+}

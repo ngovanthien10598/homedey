@@ -16,7 +16,6 @@ const PageHeader = (props) => {
   const menuItems = [
     { name: 'Dự án', path: '/project' },
     { name: 'Tin tức', path: '/news' },
-    { name: 'Thông tin', path: '/about' },
     // { name: 'Liên hệ', path: '/lien-he' },
   ]
   const location = useLocation();
@@ -65,7 +64,7 @@ const PageHeader = (props) => {
               categories &&
               categories.filter(c => !c.for_rent).map(c => {
                 return <Menu.Item key={`/for-sale-${c.id}`}>
-                  <Link to={`/real-estate?for_rent=false&&type=${c.id}`}>Bán {c.name}</Link>
+                  <Link to={`/real-estate?for_rent=false&real_estate_category__slug=${c.slug}`}>Bán {c.name}</Link>
                 </Menu.Item>
               })
             }
@@ -77,7 +76,7 @@ const PageHeader = (props) => {
               categories &&
               categories.filter(c => c.for_rent).map(c => {
                 return <Menu.Item key={`/real-estate?for_rent=true${c.id}`}>
-                  <Link to={`/real-estate?for_rent=true&&type=${c.id}`}>Cho thuê {c.name}</Link>
+                  <Link to={`/real-estate?for_rent=true&real_estate_category__slug=${c.slug}`}>Cho thuê {c.name}</Link>
                 </Menu.Item>
               })
             }

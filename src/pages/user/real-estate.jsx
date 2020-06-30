@@ -1,61 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Tabs, Table, Tooltip, Modal } from 'antd';
-import { Link, useRouteMatch } from 'react-router-dom';
-import { getUserRealEstateAPI, getWaitingRealEstateAPI, getRejectedRealEstateAPI } from 'services/user/listing';
-import { deleteRealEstateAPI } from 'services/user/listing';
+import { Row, Col, Button, Table, Tooltip, Modal, Popconfirm, Tag, Form } from 'antd';
+import { getUserRealEstateAPI, uploadRealEstateImagesAPI, updateRealEstateAPI, deleteRealEstateAPI } from 'services/user/listing';
+import { createRealEstateAPI } from 'services/user/real-estate';
 import Cookies from 'js-cookie';
-import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { getShortAddressString } from 'utils/string';
+import RealEstateForm from 'forms/RealEstateForm/RealEstateForm';
+import UploadPictures from 'components/UploadPictures/UploadPictures';
 // import AdminLayout from 'layouts/AdminLayout/AdminLayout';
-const { TabPane } = Tabs;
-const { confirm } = Modal;
+const { useForm } = Form;
 
 const UserRealEstatePage = props => {
-  const { path } = useRouteMatch();
   const accessToken = Cookies.get('access');
-  const [currentTab, setCurrentTab] = useState(1);
+  const [realEstateForm] = useForm();
 
   // Data states
   const [realEstate, setRealEstate] = useState(null);
-  const [waitingRealEstate, setWaitingRealEstate] = useState(null);
-  const [rejectedRealEstate, setRejectedRealEstate] = useState(null);
 
+  const [imageList, setImageList] = useState([]);
+  const [imageIds, setImageIds] = useState(null);
+  const [selectedRealEstate, setSelectedRealEstate] = useState(null);
+  const [action, setAction] = useState('create');
   // Loading states
-  const [isLoadingRealEstate, setLoadingRealEstate] = useState(false);
-  const [isLoadingWaitingRealEstate, setLoadingWaitingRealEstate] = useState(false);
-  const [isLoadingRejectedRealEstate, setLoadingRejectedRealEstate] = useState(false);
+  const [isLoading, setIsLoading] = useState(null);
 
-  function getTableDataFromSource(dataSource) {
-    if (!dataSource || dataSource.length === 0) return null;
-    return dataSource.map(re => {
-      const district = re.address.ward.district;
-      const city = district.city;
-      return {
-        id: re.id,
-        title: re.title,
-        price: re.price,
-        address: `${district.prefix} ${district.name}, ${city.prefix} ${city.name}`
-      }
-    })
-  }
+  const [isModalShow, setModalState] = useState(false);
 
   const tableColumns = [
     { title: 'Tiêu đề', dataIndex: 'title' },
     { title: 'Giá', dataIndex: 'price' },
-    { title: 'Địa chỉ', dataIndex: 'address' },
+    { title: 'Địa chỉ', dataIndex: 'address', render: (text, record) => getShortAddressString(record.address) },
+    {
+      title: 'Trạng thái', dataIndex: 'status', render: (text, { status }) => {
+        return status === 'pending' ?
+          <Tag color="processing">Đang đợi</Tag>
+          :
+          status === 'approved' ?
+            <Tag color="success">Đã duyệt</Tag>
+            :
+            <Tag color="error">Từ chối</Tag>
+      }
+    },
     {
       title: 'Hành động', key: 'action', render: (text, record, index) => {
         return (
           <>
-            <Link to={`${path}/${record.id}`}>
-              <Tooltip title="Xem">
-                <Button type="link" icon={<EyeOutlined />} />
-              </Tooltip>
-            </Link>
             <Tooltip title="Chỉnh sửa">
-              <Button type="link" icon={<EditOutlined />} />
+              <Button onClick={() => handleEditClick(record)} type="link" icon={<EditOutlined />} />
             </Tooltip>
             <Tooltip title="Xóa">
-              <Button onClick={() => handleDelete(record.id, index)} danger type="link" icon={<DeleteOutlined />} />
+              <Popconfirm title="Bạn có muốn chắc muốn xóa tin này" onConfirm={() => handleDeleteRealEstate(record.id)}>
+                <Button danger type="link" icon={<DeleteOutlined />} />
+              </Popconfirm>
             </Tooltip>
           </>
         )
@@ -64,53 +60,185 @@ const UserRealEstatePage = props => {
   ]
 
   async function getUserRealEstate() {
-    setLoadingRealEstate(true);
+    setIsLoading(true);
     try {
       const response = await getUserRealEstateAPI(accessToken);
       setRealEstate(response.data.results);
     } catch (error) {
       console.log(error);
     }
-    setLoadingRealEstate(false);
+    setIsLoading(false);
   }
 
-  async function getWaitingRealEstate() {
-    setLoadingWaitingRealEstate(true);
+  const handleBeforeUpload = file => {
+    setImageList([...imageList, file]);
+    return false;
+  }
+
+  const handleUploadChange = ({ fileList }) => {
+    setImageList([...fileList]);
+  }
+
+  const handleCreateRealEstate = async values => {
+    setIsLoading(true);
     try {
-      const response = await getWaitingRealEstateAPI(accessToken);
-      setWaitingRealEstate(response.data.results);
+
+      const originFileList = imageList.map(image => image.originFileObj);
+      let image_ids;
+      if (!imageIds) {
+        const response = await uploadRealEstateImagesAPI(accessToken, originFileList);
+        image_ids = response.data.image_ids;
+        setImageIds(image_ids);
+      }
+
+      const {
+        title,
+        price,
+        bedroom,
+        bathroom,
+        area,
+        lot_size,
+        year_build,
+        detail,
+        real_estate_category_id,
+        ward_id,
+        street_id,
+        position: {
+          lat,
+          lng
+        }
+      } = values;
+
+      const body = {
+        title,
+        price,
+        bedroom,
+        bathroom,
+        area,
+        lot_size,
+        year_build,
+        detail,
+        real_estate_category_id,
+        ward_id,
+        street_id,
+        longitude: lng,
+        latitude: lat,
+        image_ids: image_ids
+      }
+      await createRealEstateAPI(accessToken, body);
+
+      getUserRealEstate();
+      setModalState(false);
+      setImageIds([]);
+      setImageList(null);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
-    setLoadingWaitingRealEstate(false);
   }
 
-  async function getRejectedRealEstate() {
-    setLoadingRejectedRealEstate(true);
+  const handleUpdateRealEstate = async values => {
+    setIsLoading(true);
     try {
-      const response = await getRejectedRealEstateAPI(accessToken);
-      setRejectedRealEstate(response.data.results);
+      const old_image_ids = imageList.filter(image => image.id).map(image => image.id);
+      const originFileList = imageList.filter(image => image.originFileObj).map(image => image.originFileObj);
+      let image_ids;
+
+      if (originFileList.length > 0) {
+        if (!imageIds) {
+          const response = await uploadRealEstateImagesAPI(accessToken, originFileList);
+          image_ids = response.data.image_ids;
+          setImageIds(image_ids);
+        }
+      }
+
+      const {
+        title,
+        price,
+        bedroom,
+        bathroom,
+        area,
+        lot_size,
+        year_build,
+        detail,
+        real_estate_category_id,
+        ward_id,
+        street_id,
+        position: {
+          lat,
+          lng
+        }
+      } = values;
+
+      const body = {
+        title,
+        price,
+        bedroom,
+        bathroom,
+        area,
+        lot_size,
+        year_build,
+        detail,
+        real_estate_category_id,
+        ward_id,
+        street_id,
+        longitude: lng,
+        latitude: lat,
+        image_ids: image_ids ? [...old_image_ids, ...image_ids] : [...old_image_ids]
+      }
+      await updateRealEstateAPI(accessToken, selectedRealEstate.id, body);
+
+      getUserRealEstate();
+      setModalState(false);
+      setImageIds([]);
+      setImageList(null);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
-    setLoadingRejectedRealEstate(false);
   }
 
-  const handleTabsChange = tabKey => {
-    const numTabKey = Number.parseInt(tabKey);
-    setCurrentTab(tabKey);
-    switch (numTabKey) {
-      case 1:
-        getUserRealEstate();
-        break;
-      case 2:
-        getWaitingRealEstate();
-        break;
-      case 3:
-        getRejectedRealEstate();
-        break;
-      default:
-        return null;
+  const handleDeleteRealEstate = async id => {
+    setIsLoading(true);
+    try {
+      await deleteRealEstateAPI(accessToken, id);
+      getUserRealEstate();
+    } catch (error) {
+      console.log(error);
+      setIsLoading(true);
+    }
+  }
+
+  const handleCreateClick = () => {
+    setAction('create');
+    setModalState(true);
+  }
+
+  const handleEditClick = realEstate => {
+    setAction('update');
+    setSelectedRealEstate(realEstate);
+    setModalState(true);
+    setImageList(realEstate.images.map(image => {
+      return {
+        ...image,
+        uid: image.id
+      }
+    }))
+  }
+
+  const handleModalAfterClose = () => {
+    realEstateForm.resetFields();
+    setSelectedRealEstate(null);
+    setImageList([]);
+  }
+
+  const handleModalOk = () => {
+    if (action === 'create') {
+      realEstateForm.validateFields().then(values => handleCreateRealEstate(values));
+    }
+
+    if (action === 'update') {
+      realEstateForm.validateFields().then(values => handleUpdateRealEstate(values));
     }
   }
 
@@ -118,29 +246,6 @@ const UserRealEstatePage = props => {
     getUserRealEstate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleDelete = (realEstateId, index) => {
-    confirm({
-      title: "Xóa tin",
-      content: "Bạn có chắc muốn xóa tin này không?",
-      onOk: async () => {
-        try {
-          await deleteRealEstateAPI(accessToken, realEstateId);
-          let newState;
-          if (currentTab === 1) {
-            newState = realEstate.splice(index, 1);
-            setRealEstate(newState);
-          } else if (currentTab === 2) {
-            newState = waitingRealEstate.splice(index, 1);
-          } else if (currentTab === 3) {
-            newState = rejectedRealEstate.splice(index, 3);
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    })
-  }
 
   return (
     <div className="user-re-page">
@@ -150,38 +255,30 @@ const UserRealEstatePage = props => {
             <h2><strong>Tin bất động sản</strong></h2>
           </Col>
           <Col>
-            <Button>
-              <Link to={`${path}/create`}>Thêm mới</Link>
+            <Button icon={<PlusOutlined />} onClick={handleCreateClick}>
+              Đăng tin
             </Button>
           </Col>
         </Row>
         {/* <Divider /> */}
       </section>
       <section className="user-re-page_list">
-        <Tabs onChange={handleTabsChange}>
-          <TabPane tab="Đã duyệt" key={1} >
-            <Table
-              rowKey="id"
-              columns={tableColumns}
-              dataSource={getTableDataFromSource(realEstate)}
-              loading={isLoadingRealEstate} />
-          </TabPane>
-          <TabPane tab="Đang chờ duyệt" key={2}>
-            <Table
-              rowKey="id"
-              columns={tableColumns}
-              dataSource={getTableDataFromSource(waitingRealEstate)}
-              loading={isLoadingWaitingRealEstate} />
-          </TabPane>
-          <TabPane tab="Từ chối" key={3}>
-            <Table
-              rowKey="id"
-              columns={tableColumns}
-              dataSource={rejectedRealEstate}
-              loading={isLoadingRejectedRealEstate} />
-          </TabPane>
-        </Tabs>
+        <Table loading={isLoading} rowKey="id" columns={tableColumns} dataSource={realEstate} />
       </section>
+      <Modal
+        visible={isModalShow}
+        afterClose={handleModalAfterClose}
+        destroyOnClose={true}
+        confirmLoading={isLoading}
+        onOk={handleModalOk}
+        onCancel={() => setModalState(false)}
+        width="80%">
+        <RealEstateForm form={realEstateForm} realEstate={selectedRealEstate} />
+        <UploadPictures
+          fileList={imageList}
+          beforeUpload={handleBeforeUpload}
+          onChange={handleUploadChange} />
+      </Modal>
     </div>
   )
 }

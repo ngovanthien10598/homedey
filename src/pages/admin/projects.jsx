@@ -283,7 +283,7 @@ const AdminProjectsPage = props => {
         street_id,
         latitude: lat,
         longitude: lng,
-        image_ids: [...old_image_ids, ...image_ids]
+        image_ids: image_ids ? [...old_image_ids, ...image_ids] : [...old_image_ids]
       };
       await updateProjectAPI(accessToken, selectedProject.id, body);
 
