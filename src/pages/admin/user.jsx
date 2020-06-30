@@ -3,7 +3,7 @@ import { Divider, Table, Tag, Button } from 'antd';
 // import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 import { getAllUsersAPI, blockUserAPI, unblockUserAPI } from 'services/admin/user';
 import Cookies from 'js-cookie';
-import { CheckCircleFilled, LockOutlined } from '@ant-design/icons';
+import { CheckCircleFilled } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
 
 const AdminUserPage = props => {
@@ -79,6 +79,7 @@ const AdminUserPage = props => {
 
   useEffect(() => {
     getAllUsers(1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -2,6 +2,7 @@ import React from 'react';
 import { Divider, Row, Col, Avatar, Empty } from 'antd';
 import { useSelector } from 'react-redux';
 import UserForm from 'forms/UserForm/UserForm';
+import ChangePasswordForm from 'forms/ChangePasswordForm/ChangePasswordForm';
 // import AdminLayout from 'layouts/AdminLayout/AdminLayout';
 
 const UserHomePage = props => {
@@ -17,7 +18,10 @@ const UserHomePage = props => {
           :
           <Empty />
       }
-
+      {
+        user &&
+        <ChangePasswordForm />
+      }
     </div>
   )
 }

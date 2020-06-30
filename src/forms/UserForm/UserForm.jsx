@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Avatar, Input, Row, Col, Button, DatePicker } from 'antd';
+import { Form, Avatar, Input, Row, Col, Button } from 'antd';
 import UploadPictures from 'components/UploadPictures/UploadPictures';
 import Cookies from 'js-cookie';
 import { updateProfileAPI, updateAvatarAPI } from 'services/user/profile';
